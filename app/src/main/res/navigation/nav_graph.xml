@@ -3,10 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homePage">
+    app:startDestination="@id/homePageNav">
     <fragment
-        android:id="@+id/homePage"
-        android:name="com.owsky.sushihubredone.HomePage"
+        android:id="@+id/homePageNav"
+        android:name="com.owsky.sushihubredone.view.HomePage"
         android:label="HomePage"
-        tools:layout="@layout/fragment_homepage"/>
+        tools:layout="@layout/fragment_homepage">
+        <action
+            android:id="@+id/action_homePageNav_to_configureTableNav"
+            app:destination="@id/configureTableNav" />
+        <action
+            android:id="@+id/action_homePageNav_to_scanQRNav"
+            app:destination="@id/scanQRNav" />
+    </fragment>
+    <fragment
+        android:id="@+id/configureTableNav"
+        android:name="com.owsky.sushihubredone.view.ConfigureTablePage"
+        android:label="Configure a new table"
+        tools:layout="@layout/fragment_configure_table" />
+    <fragment
+        android:id="@+id/scanQRNav"
+        android:name="com.owsky.sushihubredone.view.ScanQRPage"
+        android:label="Join a table" />
 </navigation>
