@@ -66,7 +66,7 @@ class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
 			val tableCode = info[0]
 			val menuPrice = info[1].toFloat()
 			val restName = info[2]
-			model.createTable(restName, tableCode, menuPrice)
+			model.createTable(tableCode, restName, menuPrice)
 			// TODO navigate forward
 		}
 		codeScanner.errorCallback = ErrorCallback {}

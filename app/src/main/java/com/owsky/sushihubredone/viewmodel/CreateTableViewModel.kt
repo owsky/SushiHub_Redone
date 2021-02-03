@@ -2,25 +2,15 @@ package com.owsky.sushihubredone.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.owsky.sushihubredone.model.DatabaseOp
 
 class CreateTableViewModel(application: Application) : AndroidViewModel(application) {
-//	repo
-	init {
-//		repo init
+
+	fun createTable(tableCode: String, tableName: String, menuPrice: Float) {
+		DatabaseOp.createTable(tableCode, tableName, menuPrice)
 	}
 
-//	createTable for the master
-	fun createTable(name: String, menuPrice: Float) {
-//		repo.createTable(id, name, menuPrice)
-	}
-
-//	createTable fore the slaves
-	fun createTable(name: String, Code: String, menuPrice: Float) {
-//		repo.createTable(id, name, menuPrice)
-	}
-
-	fun getTableInfo(): List<String> {
-//		return repo.getTableInfo()
-		return listOf("memes")
+	fun getTableInfo(tableCode: String): List<String> {
+		return DatabaseOp.getTableInfo(tableCode)
 	}
 }

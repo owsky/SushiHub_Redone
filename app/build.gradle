@@ -34,15 +34,17 @@ android {
 }
 
 dependencies {
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    // Navigation
+    def nav_version = "2.3.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // Nearby
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
@@ -53,6 +55,10 @@ dependencies {
 
     // QR Scanner
     implementation 'com.budiyev.android:code-scanner:2.1.0'
+
+    // Couchbase Lite
+    def couch_version = "2.8.1"
+    implementation "com.couchbase.lite:couchbase-lite-android:$couch_version"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
 }

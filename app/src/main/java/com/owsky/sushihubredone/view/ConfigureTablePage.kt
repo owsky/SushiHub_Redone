@@ -8,9 +8,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.viewmodel.CreateTableViewModel
+import java.util.*
 
 class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {
 
@@ -23,18 +23,24 @@ class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {
 
 		menuPrice.imeOptions = EditorInfo.IME_ACTION_DONE
 		done.setOnClickListener {
-			if (name.text.isEmpty())
-				Toast.makeText(requireContext(), "Insert the restaurant's name", Toast.LENGTH_SHORT)
-					.show()
-			else if (menuPrice.text.isEmpty())
-				Toast.makeText(requireContext(), "Insert the menu's price", Toast.LENGTH_SHORT)
-					.show()
-			else {
-				val price = menuPrice.text.toString().toFloat()
-				val restaurantName = name.text.toString()
-				model.createTable(restaurantName, price)
-//				findNavController().navigate(action)
+			when {
+				name.text.isEmpty() ->
+					Toast.makeText(
+						requireContext(),
+						"Insert the restaurant's name", Toast.LENGTH_SHORT
+					).show()
+				menuPrice.text.isEmpty() ->
+					Toast.makeText(
+						requireContext(),
+						"Insert the menu's price", Toast.LENGTH_SHORT
+					).show()
 			}
+			val tableCode = UUID.randomUUID().toString()
+			val restaurantName = name.text.toString()
+			val price = menuPrice.text.toString().toFloat()
+
+			model.createTable(tableCode, restaurantName, price)
+//			findNavController().navigate(action)
 		}
 	}
 }

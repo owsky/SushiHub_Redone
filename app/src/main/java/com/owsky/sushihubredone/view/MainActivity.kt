@@ -20,6 +20,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.couchbase.lite.CouchbaseLite
+import com.couchbase.lite.Database
+import com.couchbase.lite.DatabaseConfiguration
 import com.google.android.material.navigation.NavigationView
 import com.owsky.sushihubredone.R
 
@@ -45,6 +48,9 @@ class MainActivity : NavigationView.OnNavigationItemSelectedListener, AppCompatA
 		checkPermissions()
 		checkBluetooth()
 		checkWifi()
+
+		// Couchbase Lite initialization
+		CouchbaseLite.init(this)
 	}
 
 	override fun onSupportNavigateUp(): Boolean {
