@@ -20,9 +20,71 @@
         android:id="@+id/configureTableNav"
         android:name="com.owsky.sushihubredone.view.ConfigureTablePage"
         android:label="Configure a new table"
-        tools:layout="@layout/fragment_configure_table" />
+        tools:layout="@layout/fragment_configure_table" >
+        <action
+            android:id="@+id/action_configureTableNav_to_generateQRPage"
+            app:destination="@id/generateQRPage" />
+    </fragment>
     <fragment
         android:id="@+id/scanQRNav"
         android:name="com.owsky.sushihubredone.view.ScanQRPage"
-        android:label="Join a table" />
+        android:label="Join a table"
+        tools:layout="@layout/fragment_qr_scan">
+        <action
+            android:id="@+id/action_scanQRNav_to_configureUserPage"
+            app:destination="@id/configureUserPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/configureUserPage"
+        android:name="com.owsky.sushihubredone.view.ConfigureUserPage"
+        android:label="Configure User"
+        tools:layout="@layout/fragment_configure_user">
+        <action
+            android:id="@+id/action_configureUserPage_to_tablePage"
+            app:destination="@id/tablePage" />
+    </fragment>
+    <fragment
+        android:id="@+id/tablePage"
+        android:name="com.owsky.sushihubredone.view.TablePage"
+        android:label="Table"
+        tools:layout="@layout/fragment_table">
+        <action
+            android:id="@+id/action_tablePage_to_generateQRPage"
+            app:destination="@id/generateQRPage" />
+        <action
+            android:id="@+id/action_tablePage_to_insertOrderPage"
+            app:destination="@id/insertOrderPage" />
+    </fragment>
+    <fragment
+        android:id="@+id/generateQRPage"
+        android:name="com.owsky.sushihubredone.view.GenerateQRPage"
+        android:label="Generate QR"
+        tools:layout="@layout/fragment_qr_generator">
+        <action
+            android:id="@+id/action_generateQRPage_to_configureUserPage"
+            app:destination="@id/configureUserPage" />
+        <argument
+            android:name="share"
+            android:defaultValue="false"
+            app:argType="boolean" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyNav"
+        android:name="com.owsky.sushihubredone.view.ListOrders"
+        android:label="History"
+        tools:layout="@layout/fragment_recyclerview">
+        <action
+            android:id="@+id/action_historyNav_to_historyNav2"
+            app:destination="@id/historyDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/historyDetails"
+        android:name="com.owsky.sushihubredone.view.ListOrders"
+        android:label="History Details"
+        tools:layout="@layout/fragment_recyclerview" />
+    <fragment
+        android:id="@+id/insertOrderPage"
+        android:name="com.owsky.sushihubredone.view.InsertOrderPage"
+        android:label="InsertOrderPage"
+        tools:layout="@layout/fragment_user_input"/>
 </navigation>

@@ -64,10 +64,10 @@ class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
 			val model: CreateTableViewModel by viewModels()
 			val info = TextUtils.split(it.text, ";")
 			val tableCode = info[0]
-			val menuPrice = info[1].toFloat()
+			val menuPrice = info[1].toDouble()
 			val restName = info[2]
 			model.createTable(tableCode, restName, menuPrice)
-			// TODO navigate forward
+			findNavController().navigate(R.id.action_scanQRNav_to_configureUserPage)
 		}
 		codeScanner.errorCallback = ErrorCallback {}
 		scannerView.setOnClickListener { codeScanner.startPreview() }

@@ -12,6 +12,7 @@ import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -19,10 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.couchbase.lite.CouchbaseLite
-import com.couchbase.lite.Database
-import com.couchbase.lite.DatabaseConfiguration
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.owsky.sushihubredone.R
 
@@ -36,21 +34,20 @@ class MainActivity : NavigationView.OnNavigationItemSelectedListener, AppCompatA
 		setContentView(R.layout.activity_main)
 
 		// Navigation Component setup
+		val toolbar = findViewById<Toolbar>(R.id.toolbar)
+		setSupportActionBar(toolbar)
 		val navHostFragment =
 			supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
 		navController = navHostFragment.navController
 		drawer = findViewById(R.id.drawer_layout)
 		appBarConfiguration =
-			AppBarConfiguration(hashSetOf(R.id.homePageNav, R.id.listsNav, R.id.historyNav), drawer)
-		setupActionBarWithNavController(navController, appBarConfiguration)
+			AppBarConfiguration(setOf(R.id.homePageNav, R.id.tablePage, R.id.historyNav), drawer)
+		toolbar.setupWithNavController(navController, appBarConfiguration)
 		findViewById<NavigationView>(R.id.navigation_view).setNavigationItemSelectedListener(this)
 
 		checkPermissions()
 		checkBluetooth()
 		checkWifi()
-
-		// Couchbase Lite initialization
-		CouchbaseLite.init(this)
 	}
 
 	override fun onSupportNavigateUp(): Boolean {
@@ -74,7 +71,7 @@ class MainActivity : NavigationView.OnNavigationItemSelectedListener, AppCompatA
 	}
 
 	override fun onNavigationItemSelected(item: MenuItem): Boolean {
-		val prefs = getPreferences(Context.MODE_PRIVATE)
+		val prefs = getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
 		when (item.itemId) {
 			R.id.listsNav -> {
 				if (prefs.contains("table_code")) {

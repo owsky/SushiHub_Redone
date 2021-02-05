@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.viewmodel.CreateTableViewModel
 import java.util.*
@@ -37,10 +38,10 @@ class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {
 			}
 			val tableCode = UUID.randomUUID().toString()
 			val restaurantName = name.text.toString()
-			val price = menuPrice.text.toString().toFloat()
+			val price = menuPrice.text.toString().toDouble()
 
 			model.createTable(tableCode, restaurantName, price)
-//			findNavController().navigate(action)
+			findNavController().navigate(R.id.action_configureTableNav_to_generateQRPage)
 		}
 	}
 }
