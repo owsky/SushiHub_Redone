@@ -32,10 +32,10 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-			override fun handleOnBackPressed() {
-				CancelDialog().show(parentFragmentManager, tag)
-			}
-		})
+            override fun handleOnBackPressed() {
+                CancelDialog().show(parentFragmentManager, tag)
+            }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -82,34 +82,17 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
         }
 
         when {
-            dishCode.trim().isEmpty() -> Toast.makeText(
-					requireContext(),
-					"Insert the dish code",
-					Toast.LENGTH_SHORT
-			).show()
-            quantity.text.toString().isEmpty() -> Toast.makeText(
-					requireContext(),
-					"Insert the quantity",
-					Toast.LENGTH_SHORT
-			).show()
+            dishCode.trim().isEmpty() ->
+                Toast.makeText(requireContext(), "Insert the dish code", Toast.LENGTH_SHORT).show()
+            quantity.text.toString().isEmpty() ->
+                Toast.makeText(requireContext(), "Insert the quantity", Toast.LENGTH_SHORT).show()
             else -> {
                 val username = prefs.getString("username", null)!!
-                val newOrder = Order(
-						dishCode,
-						description,
-						status,
-						tableCode,
-						username,
-						false,
-						extraPrice
-				)
+                val newOrder = Order(dishCode, description, status, tableCode, username, false, extraPrice)
                 viewModel.insertOrder(newOrder, quantity.text.toString().toInt())
-                Snackbar.make(
-						requireActivity().findViewById(android.R.id.content),
-						"Undo?",
-						BaseTransientBottomBar.LENGTH_LONG
-				).setAction("Undo?") { viewModel.undoInsert() }
-                        .setAnchorView(requireActivity().findViewById(R.id.saveAndQuit)).show()
+                Snackbar.make(requireActivity().findViewById(android.R.id.content), "Undo?", BaseTransientBottomBar.LENGTH_LONG)
+                    .setAction("Undo?") { viewModel.undoInsert() }
+                    .setAnchorView(requireActivity().findViewById(R.id.saveAndQuit)).show()
                 return true
             }
         }

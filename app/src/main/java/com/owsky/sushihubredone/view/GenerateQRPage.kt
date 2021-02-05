@@ -41,7 +41,7 @@ class GenerateQRPage : Fragment(R.layout.fragment_qr_generator) {
     }
 
     private fun generateQR() {
-        val qrSize = 177;
+        val qrSize = 177
         val imageView = requireView().findViewById<ImageView>(R.id.qr_code)
         val qrCodeWriter = QRCodeWriter()
         val bitMatrix = qrCodeWriter.encode(data, BarcodeFormat.QR_CODE, qrSize, qrSize)

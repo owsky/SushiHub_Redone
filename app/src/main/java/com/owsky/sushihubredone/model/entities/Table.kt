@@ -6,10 +6,10 @@ import java.util.*
 
 @Entity
 data class Table(
-        @PrimaryKey val id: String,
-        var restaurant: String,
-        val dateCreation: Date,
-        var menuPrice: Double
+    @PrimaryKey val id: String,
+    var restaurant: String,
+    val dateCreation: Date,
+    var menuPrice: Double
 ) {
     var isCheckedOut = false
 }

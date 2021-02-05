@@ -20,7 +20,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun getInstance(context: Context): AppDatabase {
             if (instance == null)
                 instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "SushiHub_Redone")
-                        .fallbackToDestructiveMigration().build()
+                    .fallbackToDestructiveMigration().build()
             return instance!!
         }
     }

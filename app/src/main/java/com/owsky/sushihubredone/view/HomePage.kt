@@ -13,34 +13,34 @@ import com.owsky.sushihubredone.databinding.FragmentHomepageBinding
 
 class HomePage : Fragment(R.layout.fragment_homepage) {
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		val binding = FragmentHomepageBinding.bind(view)
-		binding.apply {
-			btnJoin.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_scanQRNav) }
-			btnCreate.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_configureTableNav) }
-		}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val binding = FragmentHomepageBinding.bind(view)
+        binding.apply {
+            btnJoin.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_scanQRNav) }
+            btnCreate.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_configureTableNav) }
+        }
 
-		val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-		prefs.getString("table_code", null)?.let {
-			ResumeDialog(it).show(parentFragmentManager, null)
-		}
-	}
+        val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+        prefs.getString("table_code", null)?.let {
+            ResumeDialog(it).show(parentFragmentManager, null)
+        }
+    }
 
-	class ResumeDialog(tableCode: String) : DialogFragment() {
-		private val tableCode = tableCode
+    class ResumeDialog(tableCode: String) : DialogFragment() {
+        private val tableCode = tableCode
 
-		override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-			val builder = AlertDialog.Builder(requireContext())
-			builder.setTitle("Do you want to resume the last unfinished session?")
-				.setPositiveButton("Yes") { _, _ -> findNavController().navigate(R.id.tablePage) }
-				.setNegativeButton("No") { _, _ ->
-					{
-						// TODO: implement view model checkout
-						dismiss()
-					}
-				}
-			return builder.create()
-		}
-	}
+        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Do you want to resume the last unfinished session?")
+                .setPositiveButton("Yes") { _, _ -> findNavController().navigate(R.id.tablePage) }
+                .setNegativeButton("No") { _, _ ->
+                    {
+                        // TODO: implement view model checkout
+                        dismiss()
+                    }
+                }
+            return builder.create()
+        }
+    }
 }

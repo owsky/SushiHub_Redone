@@ -24,12 +24,7 @@ class ListOrders(private val listOrdersType: ListOrdersType) :
         val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
         lateinit var callback: ItemTouchHelper.SimpleCallback
         runBlocking {
-            launch {
-                callback = viewModel.getRecyclerCallback(
-                    requireContext(),
-                    ordersAdapter,
-                    listOrdersType)
-            }.join()
+            launch { callback = viewModel.getRecyclerCallback(requireContext(), ordersAdapter, listOrdersType) }.join()
         }
         binding.apply {
             recyclerView.apply {

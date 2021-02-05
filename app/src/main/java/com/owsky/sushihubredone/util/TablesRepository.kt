@@ -14,9 +14,7 @@ import java.util.*
 class TablesRepository(application: Application) {
     private val tableDao = AppDatabase.getInstance(application).tableDao()
     private val prefs = application.getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-    val tablesHistory: LiveData<List<Table>> by lazy {
-        tableDao.getAllButCurrent()
-    }
+    val tablesHistory: LiveData<List<Table>> by lazy { tableDao.getAllButCurrent() }
 
     suspend fun getMenuPrice(tableCode: String): Double {
         return withContext(CoroutineScope(IO).coroutineContext) {
@@ -25,9 +23,7 @@ class TablesRepository(application: Application) {
     }
 
     fun checkoutTable(tableCode: String) {
-        CoroutineScope(IO).launch {
-            tableDao.getTable(tableCode)?.let { tableDao.delete(it) }
-        }
+        CoroutineScope(IO).launch { tableDao.getTable(tableCode)?.let { tableDao.delete(it) } }
     }
 
     fun createTable(restaurant: String, tableCode: String?, menuPrice: Double) {
@@ -47,15 +43,12 @@ class TablesRepository(application: Application) {
                 val table = Table(newCode, restaurant, date, menuPrice)
                 tableDao.insert(table)
             }
-            prefs.edit().putString("table_code", tableCode).putString("rest_name", restaurant)
-                .apply()
+            prefs.edit().putString("table_code", tableCode).putString("rest_name", restaurant).apply()
         }
     }
 
     suspend fun getTableAsync(): Table? {
-        return withContext(CoroutineScope(IO).coroutineContext) {
-            tableDao.getTable(prefs.getString("table_code", null)!!)
-        }
+        return withContext(CoroutineScope(IO).coroutineContext) { tableDao.getTable(prefs.getString("table_code", null)!!) }
     }
 
     fun deleteAllTables() {

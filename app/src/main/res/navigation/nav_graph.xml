@@ -85,6 +85,6 @@
     <fragment
         android:id="@+id/insertOrderPage"
         android:name="com.owsky.sushihubredone.view.InsertOrderPage"
-        android:label="InsertOrderPage"
-        tools:layout="@layout/fragment_user_input"/>
+        android:label="New order"
+        tools:layout="@layout/fragment_user_input" />
 </navigation>

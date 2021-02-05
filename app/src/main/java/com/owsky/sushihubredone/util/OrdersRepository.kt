@@ -29,24 +29,18 @@ class OrdersRepository(application: Application) {
     private val orderDao = AppDatabase.getInstance(application).orderDao()
     private val prefs = application.getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
     private val table = prefs.getString("table_code", null)!!
-    val pendingOrders by lazy {
-        orderDao.getAllByStatus(OrderStatus.Pending, table)
-    }
-    val confirmedOrders by lazy {
-        orderDao.getAllByStatus(OrderStatus.Confirmed, table)
-    }
-    val deliveredOrders by lazy {
-        orderDao.getAllByStatus(OrderStatus.Delivered, table)
-    }
-    val synchronizedOrders by lazy {
-        orderDao.getAllSynchronized(table)
-    }
+    val pendingOrders by lazy { orderDao.getAllByStatus(OrderStatus.Pending, table) }
+    val confirmedOrders by lazy { orderDao.getAllByStatus(OrderStatus.Confirmed, table) }
+    val deliveredOrders by lazy { orderDao.getAllByStatus(OrderStatus.Delivered, table) }
+    val synchronizedOrders by lazy { orderDao.getAllSynchronized(table) }
     private var lastInsertedIds = LongArray(99)
+    private val connection by lazy {
+        val isMaster = prefs.getBoolean("is_master", false)
+        Connectivity.getInstance(!isMaster, table, getPayloadCallback(), application)
+    }
 
     fun insertOrder(order: Order, quantity: Int) {
-        CoroutineScope(IO).launch {
-            lastInsertedIds = orderDao.insertAll(*Array(quantity) { order })
-        }
+        CoroutineScope(IO).launch { lastInsertedIds = orderDao.insertAll(*Array(quantity) { order }) }
     }
 
     fun updateOrder(order: Order) {
@@ -67,7 +61,7 @@ class OrdersRepository(application: Application) {
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                // Nearby
+                connection.send(Order.toByteArray(order))
             }
         }
     }
@@ -78,7 +72,7 @@ class OrdersRepository(application: Application) {
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                //Nearby
+                connection.send(Order.toByteArray(order))
             }
         }
     }
@@ -89,7 +83,7 @@ class OrdersRepository(application: Application) {
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                // Nearby}
+                connection.send(Order.toByteArray(order))
             }
         }
     }
@@ -100,7 +94,7 @@ class OrdersRepository(application: Application) {
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                // Nearby
+                connection.send(Order.toByteArray(order))
             }
         }
     }
@@ -113,7 +107,7 @@ class OrdersRepository(application: Application) {
         if (prefs.contains("is_master"))
             cleanDatabase()
         prefs.edit().clear().apply()
-        // TODO Nearby close connection
+        connection.disconnect()
     }
 
     fun getPayloadCallback(): PayloadCallback {
@@ -128,28 +122,26 @@ class OrdersRepository(application: Application) {
                         val user = fromSlave.user
                         val price = fromSlave.price
                         when (fromSlave.status) {
-                            OrderStatus.InsertOrder -> insertOrder(
-                                Order(dish, desc, status, table, user, true, price), 1
-                            )
+                            OrderStatus.InsertOrder ->
+                                insertOrder(
+                                    Order(dish, desc, status, table, user, true, price), 1
+                                )
                             OrderStatus.DeliverOrder -> {
-                                val order =
-                                    orderDao.contains(OrderStatus.Confirmed, table, dish, user)
+                                val order = orderDao.contains(OrderStatus.Confirmed, table, dish, user)
                                 order?.let { ord ->
                                     ord.status = OrderStatus.Delivered
                                     updateOrder(ord)
                                 }
                             }
                             OrderStatus.UndoDeliverOrder -> {
-                                val order =
-                                    orderDao.contains(OrderStatus.Delivered, table, dish, user)
+                                val order = orderDao.contains(OrderStatus.Delivered, table, dish, user)
                                 order?.let { ord ->
                                     ord.status = OrderStatus.Confirmed
                                     updateOrder(ord)
                                 }
                             }
                             OrderStatus.DeleteOrder -> {
-                                val order =
-                                    orderDao.contains(OrderStatus.Confirmed, table, dish, user)
+                                val order = orderDao.contains(OrderStatus.Confirmed, table, dish, user)
                                 order?.let { ord ->
                                     deleteOrder(ord)
                                 }
@@ -166,11 +158,7 @@ class OrdersRepository(application: Application) {
         }
     }
 
-    suspend fun getRecyclerCallbackAsync(
-        context: Context,
-        adapter: OrdersAdapter,
-        listOrdersType: ListOrders.ListOrdersType
-    ): ItemTouchHelper.SimpleCallback {
+    suspend fun getRecyclerCallbackAsync(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback {
         return withContext(CoroutineScope(IO).coroutineContext) {
             when (listOrdersType) {
                 ListOrders.ListOrdersType.Pending -> makeRecyclerCallback(
@@ -217,10 +205,7 @@ private fun makeRecyclerCallback(
     drawableLeft: Int
 ): ItemTouchHelper.SimpleCallback {
     return object : ItemTouchHelper.SimpleCallback(0, dragDir2) {
-        override fun onMove(
-            recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-        ): Boolean {
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             return false
         }
 
@@ -274,15 +259,7 @@ private fun makeRecyclerCallback(
                         .decorate()
                 }
             }
-            super.onChildDraw(
-                c,
-                recyclerView,
-                viewHolder,
-                dX,
-                dY,
-                actionState,
-                isCurrentlyActive
-            )
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
 }

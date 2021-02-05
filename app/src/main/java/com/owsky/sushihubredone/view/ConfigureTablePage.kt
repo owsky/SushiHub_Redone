@@ -15,33 +15,27 @@ import java.util.*
 
 class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		val model: CreateTableViewModel by viewModels()
-		val name = view.findViewById<EditText>(R.id.configureName)
-		val menuPrice = view.findViewById<EditText>(R.id.menuPrice)
-		val done = view.findViewById<Button>(R.id.configureDone)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val model: CreateTableViewModel by viewModels()
+        val name = view.findViewById<EditText>(R.id.configureName)
+        val menuPrice = view.findViewById<EditText>(R.id.menuPrice)
+        val done = view.findViewById<Button>(R.id.configureDone)
 
-		menuPrice.imeOptions = EditorInfo.IME_ACTION_DONE
-		done.setOnClickListener {
-			when {
-				name.text.isEmpty() ->
-					Toast.makeText(
-						requireContext(),
-						"Insert the restaurant's name", Toast.LENGTH_SHORT
-					).show()
-				menuPrice.text.isEmpty() ->
-					Toast.makeText(
-						requireContext(),
-						"Insert the menu's price", Toast.LENGTH_SHORT
-					).show()
-			}
-			val tableCode = UUID.randomUUID().toString()
-			val restaurantName = name.text.toString()
-			val price = menuPrice.text.toString().toDouble()
+        menuPrice.imeOptions = EditorInfo.IME_ACTION_DONE
+        done.setOnClickListener {
+            when {
+                name.text.isEmpty() ->
+                    Toast.makeText(requireContext(), "Insert the restaurant's name", Toast.LENGTH_SHORT).show()
+                menuPrice.text.isEmpty() ->
+                    Toast.makeText(requireContext(), "Insert the menu's price", Toast.LENGTH_SHORT).show()
+            }
+            val tableCode = UUID.randomUUID().toString()
+            val restaurantName = name.text.toString()
+            val price = menuPrice.text.toString().toDouble()
 
-			model.createTable(tableCode, restaurantName, price)
-			findNavController().navigate(R.id.action_configureTableNav_to_generateQRPage)
-		}
-	}
+            model.createTable(tableCode, restaurantName, price)
+            findNavController().navigate(R.id.action_configureTableNav_to_generateQRPage)
+        }
+    }
 }

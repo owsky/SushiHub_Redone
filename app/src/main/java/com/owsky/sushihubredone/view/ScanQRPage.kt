@@ -20,66 +20,55 @@ import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.viewmodel.CreateTableViewModel
 
 class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
-	private lateinit var codeScanner: CodeScanner
-	private lateinit var scannerView: CodeScannerView
+    private lateinit var codeScanner: CodeScanner
+    private lateinit var scannerView: CodeScannerView
 
-	override fun onCreate(savedInstanceState: Bundle?) {
-		super.onCreate(savedInstanceState)
-		checkPermission()
-	}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        checkPermission()
+    }
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		scannerView = view.findViewById(R.id.scanner_view)
-		codeScanner = CodeScanner(requireContext(), scannerView)
-		setupScanner()
-	}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        scannerView = view.findViewById(R.id.scanner_view)
+        codeScanner = CodeScanner(requireContext(), scannerView)
+        setupScanner()
+    }
 
-	private fun checkPermission() {
-		if (ActivityCompat.checkSelfPermission(
-				requireContext(),
-				Manifest.permission.CAMERA
-			) != PackageManager.PERMISSION_GRANTED
-		) {
-			val requestCameraLauncher =
-				registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
-					if (!result) {
-						requireActivity().runOnUiThread {
-							Toast.makeText(
-								requireContext(),
-								"SushiHub requires the Camera permission to scan the QR codes",
-								Toast.LENGTH_SHORT
-							).show()
-						}
-						findNavController().navigateUp()
-					}
-				}
-			requestCameraLauncher.launch(Manifest.permission.CAMERA)
-		}
-	}
+    private fun checkPermission() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            val requestCameraLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+                if (!result) {
+                        Toast.makeText(requireContext(), "SushiHub requires the Camera permission to scan the QR codes", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+            }
+            requestCameraLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
 
-	private fun setupScanner() {
-		codeScanner.formats = listOf(BarcodeFormat.QR_CODE)
-		codeScanner.decodeCallback = DecodeCallback {
-			val model: CreateTableViewModel by viewModels()
-			val info = TextUtils.split(it.text, ";")
-			val tableCode = info[0]
-			val menuPrice = info[1].toDouble()
-			val restName = info[2]
-			model.createTable(tableCode, restName, menuPrice)
-			findNavController().navigate(R.id.action_scanQRNav_to_configureUserPage)
-		}
-		codeScanner.errorCallback = ErrorCallback {}
-		scannerView.setOnClickListener { codeScanner.startPreview() }
-	}
+    private fun setupScanner() {
+        codeScanner.formats = listOf(BarcodeFormat.QR_CODE)
+        codeScanner.decodeCallback = DecodeCallback {
+            val model: CreateTableViewModel by viewModels()
+            val info = TextUtils.split(it.text, ";")
+            val tableCode = info[0]
+            val menuPrice = info[1].toDouble()
+            val restName = info[2]
+            model.createTable(tableCode, restName, menuPrice)
+            findNavController().navigate(R.id.action_scanQRNav_to_configureUserPage)
+        }
+        codeScanner.errorCallback = ErrorCallback {}
+        scannerView.setOnClickListener { codeScanner.startPreview() }
+    }
 
-	override fun onResume() {
-		super.onResume()
-		codeScanner.startPreview()
-	}
+    override fun onResume() {
+        super.onResume()
+        codeScanner.startPreview()
+    }
 
-	override fun onPause() {
-		codeScanner.releaseResources()
-		super.onPause()
-	}
+    override fun onPause() {
+        codeScanner.releaseResources()
+        super.onPause()
+    }
 }

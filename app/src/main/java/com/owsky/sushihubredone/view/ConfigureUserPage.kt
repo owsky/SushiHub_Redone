@@ -13,20 +13,20 @@ import com.owsky.sushihubredone.R
 
 class ConfigureUserPage : Fragment(R.layout.fragment_configure_user) {
 
-	override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-		super.onViewCreated(view, savedInstanceState)
-		val setUsername = view.findViewById<EditText>(R.id.configureUserTextView)
-		val button = view.findViewById<Button>(R.id.configureUserBtn)
-		setUsername.imeOptions = EditorInfo.IME_ACTION_DONE
-		button.setOnClickListener {
-			val username = setUsername.text.toString()
-			if (username.trim().isEmpty())
-				Toast.makeText(requireContext(), "Insert a username", Toast.LENGTH_SHORT).show()
-			else {
-				val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE).edit()
-				prefs.putString("username", username).apply()
-				findNavController().navigate(R.id.action_configureUserPage_to_tablePage)
-			}
-		}
-	}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val setUsername = view.findViewById<EditText>(R.id.configureUserTextView)
+        val button = view.findViewById<Button>(R.id.configureUserBtn)
+        setUsername.imeOptions = EditorInfo.IME_ACTION_DONE
+        button.setOnClickListener {
+            val username = setUsername.text.toString()
+            if (username.trim().isEmpty())
+                Toast.makeText(requireContext(), "Insert a username", Toast.LENGTH_SHORT).show()
+            else {
+                val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE).edit()
+                prefs.putString("username", username).apply()
+                findNavController().navigate(R.id.action_configureUserPage_to_tablePage)
+            }
+        }
+    }
 }
