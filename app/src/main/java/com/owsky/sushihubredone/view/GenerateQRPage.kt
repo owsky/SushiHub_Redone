@@ -27,7 +27,7 @@ class GenerateQRPage : Fragment(R.layout.fragment_qr_generator) {
         lateinit var table: Table
         val viewModel: CreateTableViewModel by viewModels()
         runBlocking {
-            launch { table = viewModel.getTableInfo()!! }.join()
+            launch { table = viewModel.getTableInfo()!! }.join() // TODO fix random crash
         }
         data = TextUtils.join(";", listOf(table.id, table.restaurant, table.menuPrice))
         val args: GenerateQRPageArgs by navArgs()

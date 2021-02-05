@@ -14,7 +14,7 @@ interface OrderDao : BaseDao<Order> {
     fun getAllByTable(code: String): LiveData<List<Order>>
 
     @Query("SELECT SUM(price) FROM `Order` WHERE tableCode = :table AND NOT receivedFromSlave")
-    suspend fun getExtraPrice(table: String): Float
+    suspend fun getExtraPrice(table: String): Double
 
     @Query("SELECT * FROM `Order` WHERE status = :status AND tableCode = :table AND NOT receivedFromSlave")
     fun getAllByStatus(status: OrderStatus, table: String): LiveData<List<Order>>

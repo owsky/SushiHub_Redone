@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentHomepageBinding
+import com.owsky.sushihubredone.viewmodel.OrdersViewModel
 
 class HomePage : Fragment(R.layout.fragment_homepage) {
 
@@ -35,9 +37,9 @@ class HomePage : Fragment(R.layout.fragment_homepage) {
             builder.setTitle("Do you want to resume the last unfinished session?")
                 .setPositiveButton("Yes") { _, _ -> findNavController().navigate(R.id.tablePage) }
                 .setNegativeButton("No") { _, _ ->
-                    {
-                        // TODO: implement view model checkout
-                        dismiss()
+                    run {
+                        val viewModel: OrdersViewModel by viewModels()
+                        viewModel.checkout(requireActivity(), tableCode)
                     }
                 }
             return builder.create()

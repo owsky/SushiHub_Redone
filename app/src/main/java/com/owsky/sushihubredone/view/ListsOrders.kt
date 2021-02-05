@@ -1,10 +1,10 @@
 package com.owsky.sushihubredone.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.owsky.sushihubredone.R
@@ -13,18 +13,25 @@ import com.owsky.sushihubredone.viewmodel.OrdersViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class ListOrders(private val listOrdersType: ListOrdersType) :
-    Fragment(R.layout.fragment_recyclerview) {
+class ListOrders() : Fragment(R.layout.fragment_recyclerview) {
+    private var listOrdersType: ListOrdersType? = null
+
+    constructor(listOrdersType: ListOrdersType) : this() {
+        this.listOrdersType = listOrdersType
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentRecyclerviewBinding.bind(view)
-        val ordersAdapter = OrdersAdapter(listOrdersType)
         val viewModel: OrdersViewModel by viewModels()
-        val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+        if (listOrdersType == null) {
+            val arg: ListOrdersArgs by navArgs()
+            listOrdersType = arg.listOrdersType
+        }
+        val ordersAdapter = OrdersAdapter(listOrdersType!!)
         lateinit var callback: ItemTouchHelper.SimpleCallback
         runBlocking {
-            launch { callback = viewModel.getRecyclerCallback(requireContext(), ordersAdapter, listOrdersType) }.join()
+            launch { callback = viewModel.getRecyclerCallback(requireContext(), ordersAdapter, listOrdersType!!) }.join()
         }
         binding.apply {
             recyclerView.apply {
@@ -34,7 +41,7 @@ class ListOrders(private val listOrdersType: ListOrdersType) :
                 callback.let { ItemTouchHelper(it).attachToRecyclerView(recyclerView) }
             }
         }
-        viewModel.getOrders(listOrdersType).observe(requireActivity(), ordersAdapter::submitList)
+        viewModel.getOrders(listOrdersType!!).observe(requireActivity(), ordersAdapter::submitList)
     }
 
 //	override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -42,7 +49,7 @@ class ListOrders(private val listOrdersType: ListOrdersType) :
 //		arguments?.let {
 //			val args = ListOrdersArgs.fromBundle(it)
 //			if (args.listOrdersType == ListOrdersType.History)
-//				inflater.inflate(R.menu.storico_overflow, menu)
+//				inflater.inflate(R.menu.history_overflow, menu)
 //			menu.findItem(R.id.deleteTable).isVisible = true
 //		}
 //	}

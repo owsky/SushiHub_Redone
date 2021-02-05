@@ -19,11 +19,8 @@ import com.owsky.sushihubredone.model.entities.OrderStatus
 import com.owsky.sushihubredone.view.ListOrders
 import com.owsky.sushihubredone.view.OrdersAdapter
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class OrdersRepository(application: Application) {
     private val orderDao = AppDatabase.getInstance(application).orderDao()
@@ -99,6 +96,12 @@ class OrdersRepository(application: Application) {
         }
     }
 
+    suspend fun getExtraPrice() : Double {
+        return withContext(CoroutineScope(IO).coroutineContext) {
+            orderDao.getExtraPrice(table)
+        }
+    }
+
     private fun cleanDatabase() {
         CoroutineScope(IO).launch { orderDao.deleteSlaves() }
     }
@@ -110,7 +113,7 @@ class OrdersRepository(application: Application) {
         connection.disconnect()
     }
 
-    fun getPayloadCallback(): PayloadCallback {
+    private fun getPayloadCallback(): PayloadCallback {
         return object : PayloadCallback() {
             override fun onPayloadReceived(p0: String, p1: Payload) {
                 CoroutineScope(Dispatchers.Default).launch {

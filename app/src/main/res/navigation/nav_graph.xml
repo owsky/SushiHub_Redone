@@ -20,7 +20,7 @@
         android:id="@+id/configureTableNav"
         android:name="com.owsky.sushihubredone.view.ConfigureTablePage"
         android:label="Configure a new table"
-        tools:layout="@layout/fragment_configure_table" >
+        tools:layout="@layout/fragment_configure_table">
         <action
             android:id="@+id/action_configureTableNav_to_generateQRPage"
             app:destination="@id/generateQRPage" />
@@ -54,6 +54,12 @@
         <action
             android:id="@+id/action_tablePage_to_insertOrderPage"
             app:destination="@id/insertOrderPage" />
+        <action
+            android:id="@+id/action_tablePage_to_checkOutPage"
+            app:destination="@id/checkOutPage" />
+        <action
+            android:id="@+id/action_tablePage_to_allOrders"
+            app:destination="@id/allOrders" />
     </fragment>
     <fragment
         android:id="@+id/generateQRPage"
@@ -74,8 +80,17 @@
         android:label="History"
         tools:layout="@layout/fragment_recyclerview">
         <action
-            android:id="@+id/action_historyNav_to_historyNav2"
+            android:id="@+id/action_historyNav_to_historyDetails"
             app:destination="@id/historyDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/allOrders"
+        android:name="com.owsky.sushihubredone.view.ListOrders"
+        android:label="All Orders"
+        tools:layout="@layout/fragment_recyclerview" >
+        <argument
+            android:name="listOrdersType"
+            app:argType="com.owsky.sushihubredone.view.ListOrders$ListOrdersType" />
     </fragment>
     <fragment
         android:id="@+id/historyDetails"
@@ -87,4 +102,15 @@
         android:name="com.owsky.sushihubredone.view.InsertOrderPage"
         android:label="New order"
         tools:layout="@layout/fragment_user_input" />
+    <fragment
+        android:id="@+id/checkOutPage"
+        android:name="com.owsky.sushihubredone.view.CheckOutPage"
+        android:label="Checkout"
+        tools:layout="@layout/fragment_check_out">
+        <action
+            android:id="@+id/action_checkOutPage_to_homePageNav"
+            app:destination="@id/homePageNav"
+            app:popUpTo="@id/checkOutPage"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

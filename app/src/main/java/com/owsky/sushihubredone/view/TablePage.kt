@@ -78,10 +78,11 @@ class TablePage : Fragment(R.layout.fragment_table) {
                 findNavController().navigate(action)
             }
             R.id.toAllOrders -> {
-                //TODO
+                val action = TablePageDirections.actionTablePageToAllOrders(ListOrders.ListOrdersType.Synchronized)
+                findNavController().navigate(action)
             }
             R.id.toCheckout -> {
-                //TODO
+                findNavController().navigate(R.id.action_tablePage_to_checkOutPage)
             }
         }
         return super.onOptionsItemSelected(item)
