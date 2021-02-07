@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/historyNav"
-        android:name="com.owsky.sushihubredone.ui.view.ListOrders"
+        android:name="com.owsky.sushihubredone.ui.view.HistoryPage"
         android:label="History"
         tools:layout="@layout/fragment_recyclerview">
         <action
@@ -94,9 +94,13 @@
     </fragment>
     <fragment
         android:id="@+id/historyDetails"
-        android:name="com.owsky.sushihubredone.ui.view.ListOrders"
+        android:name="com.owsky.sushihubredone.ui.view.HistoryDetailsPage"
         android:label="History Details"
-        tools:layout="@layout/fragment_recyclerview" />
+        tools:layout="@layout/fragment_recyclerview" >
+        <argument
+            android:name="table"
+            app:argType="com.owsky.sushihubredone.data.entities.Table" />
+    </fragment>
     <fragment
         android:id="@+id/insertOrderPage"
         android:name="com.owsky.sushihubredone.ui.view.InsertOrderPage"

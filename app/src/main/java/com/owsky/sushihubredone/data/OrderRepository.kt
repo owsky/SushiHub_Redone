@@ -1,6 +1,5 @@
 package com.owsky.sushihubredone.data
 
-import android.app.Application
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.SharedPreferences
@@ -8,42 +7,58 @@ import android.graphics.Canvas
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
+import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.nearby.connection.Payload
-import com.google.android.gms.nearby.connection.PayloadCallback
-import com.google.android.gms.nearby.connection.PayloadTransferUpdate
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.data.dao.OrderDao
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.OrderStatus
-import com.owsky.sushihubredone.util.Connectivity
+import com.owsky.sushihubredone.data.entities.Table
 import com.owsky.sushihubredone.ui.view.ListOrders
 import com.owsky.sushihubredone.ui.view.OrdersAdapter
+import com.owsky.sushihubredone.util.Connectivity
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class OrderRepository @Inject constructor(private val orderDao: OrderDao, private val prefs: SharedPreferences, application: Application) {
-    private val table = prefs.getString("table_code", null)!!
-    val pendingOrders by lazy { orderDao.getAllByStatus(OrderStatus.Pending, table) }
-    val confirmedOrders by lazy { orderDao.getAllByStatus(OrderStatus.Confirmed, table) }
-    val deliveredOrders by lazy { orderDao.getAllByStatus(OrderStatus.Delivered, table) }
-    val synchronizedOrders by lazy { orderDao.getAllSynchronized(table) }
+class OrderRepository @Inject constructor(private val orderDao: OrderDao, private val prefs: SharedPreferences, private val connectivity: Connectivity?) {
+    private val table = prefs.getString("table_code", null)
+    val pendingOrders by lazy {
+        if (table != null) {
+            orderDao.getAllByStatus(OrderStatus.Pending, table)
+        } else null
+    }
+    val confirmedOrders by lazy {
+        if (table != null) {
+            orderDao.getAllByStatus(OrderStatus.Confirmed, table)
+        } else null
+    }
+    val deliveredOrders by lazy {
+        if (table != null) {
+            orderDao.getAllByStatus(OrderStatus.Delivered, table)
+        } else null
+    }
+    val synchronizedOrders by lazy {
+        if (table != null) {
+            orderDao.getAllSynchronized(table)
+        } else null
+    }
+
     private var lastInsertedIds = LongArray(99)
-    private val connectivity = Connectivity.getInstance(!prefs.contains("is_master"), table, getPayloadCallback(), application)
 
     fun insertOrder(order: Order, quantity: Int) {
         CoroutineScope(IO).launch { lastInsertedIds = orderDao.insertAll(*Array(quantity) { order }) }
     }
 
-    fun updateOrder(order: Order) {
+    private fun updateOrder(order: Order) {
         CoroutineScope(IO).launch { orderDao.update(order) }
     }
 
-    fun deleteOrder(order: Order) {
+    private fun deleteOrder(order: Order) {
         CoroutineScope(IO).launch { orderDao.delete(order) }
     }
 
@@ -57,7 +72,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity.send(Order.toByteArray(order))
+                connectivity?.send(Order.toByteArray(order))
             }
         }
     }
@@ -68,7 +83,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity.send(Order.toByteArray(order))
+                connectivity?.send(Order.toByteArray(order))
             }
         }
     }
@@ -79,7 +94,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity.send(Order.toByteArray(order))
+                connectivity?.send(Order.toByteArray(order))
             }
         }
     }
@@ -90,14 +105,14 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity.send(Order.toByteArray(order))
+                connectivity?.send(Order.toByteArray(order))
             }
         }
     }
 
-    suspend fun getExtraPrice() : Double {
+    suspend fun getExtraPrice(): Double {
         return withContext(CoroutineScope(IO).coroutineContext) {
-            orderDao.getExtraPrice(table)
+            orderDao.getExtraPrice(table!!)
         }
     }
 
@@ -109,159 +124,90 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
         if (prefs.contains("is_master"))
             cleanDatabase()
         prefs.edit().clear().apply()
-        this.connectivity.disconnect()
+        this.connectivity?.disconnect()
     }
 
-    private fun getPayloadCallback(): PayloadCallback {
-        return object : PayloadCallback() {
-            override fun onPayloadReceived(p0: String, p1: Payload) {
-                CoroutineScope(Dispatchers.Default).launch {
-                    p1.asBytes()?.let {
-                        val fromSlave = Order.fromByteArray(it)
-                        val dish = fromSlave.dish
-                        val desc = fromSlave.desc
-                        val status = fromSlave.status
-                        val user = fromSlave.user
-                        val price = fromSlave.price
-                        when (fromSlave.status) {
-                            OrderStatus.InsertOrder ->
-                                insertOrder(
-                                    Order(dish, desc, status, table, user, true, price), 1
-                                )
-                            OrderStatus.DeliverOrder -> {
-                                val order = orderDao.contains(OrderStatus.Confirmed, table, dish, user)
-                                order?.let { ord ->
-                                    ord.status = OrderStatus.Delivered
-                                    updateOrder(ord)
-                                }
-                            }
-                            OrderStatus.UndoDeliverOrder -> {
-                                val order = orderDao.contains(OrderStatus.Delivered, table, dish, user)
-                                order?.let { ord ->
-                                    ord.status = OrderStatus.Confirmed
-                                    updateOrder(ord)
-                                }
-                            }
-                            OrderStatus.DeleteOrder -> {
-                                val order = orderDao.contains(OrderStatus.Confirmed, table, dish, user)
-                                order?.let { ord ->
-                                    deleteOrder(ord)
-                                }
-                            }
-                            else -> Log.d(TAG, "onPayloadReceived: wrong operation status")
-                        }
+    fun getOrderHistory(tableCode: String): LiveData<List<Order>> {
+        return orderDao.getAllByTable(tableCode)
+    }
+
+    fun getRecyclerCallback(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback {
+        return when (listOrdersType) {
+            ListOrders.ListOrdersType.Pending -> makeRecyclerCallback(
+                context,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                { integer -> confirmOrder(adapter.getOrderAt(integer)) },
+                { integer -> deleteOrder(adapter.getOrderAt(integer)) },
+                ContextCompat.getColor(context, R.color.colorPrimary),
+                ContextCompat.getColor(context, R.color.red),
+                R.drawable.ic_send, R.drawable.ic_delete
+            )
+            ListOrders.ListOrdersType.Confirmed -> makeRecyclerCallback(
+                context,
+                ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
+                { integer -> markAsDelivered(adapter.getOrderAt(integer)) },
+                { integer -> undoConfirmOrder(adapter.getOrderAt(integer)) },
+                ContextCompat.getColor(context, R.color.colorPrimary),
+                ContextCompat.getColor(context, R.color.colorPrimary),
+                R.drawable.ic_confirmed, R.drawable.ic_send_rev
+            )
+            ListOrders.ListOrdersType.Delivered -> makeRecyclerCallback(
+                context,
+                ItemTouchHelper.LEFT,
+                null,
+                { integer -> undoMarkAsDelivered(adapter.getOrderAt(integer)) },
+                0,
+                ContextCompat.getColor(context, R.color.colorPrimary),
+                0, R.drawable.ic_send_rev
+            )
+            else -> makeRecyclerCallback(context, 0, null, null, 0, 0, 0, 0)
+        }
+    }
+
+    private fun makeRecyclerCallback(
+        context: Context,
+        dragDir2: Int,
+        consumerRight: Consumer<Int>?,
+        consumerLeft: Consumer<Int>?,
+        colorRight: Int,
+        colorLeft: Int,
+        drawableRight: Int,
+        drawableLeft: Int
+    ): ItemTouchHelper.SimpleCallback {
+        return object : ItemTouchHelper.SimpleCallback(0, dragDir2) {
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if (direction == ItemTouchHelper.RIGHT)
+                    consumerRight?.accept(viewHolder.adapterPosition)
+                else if (direction == ItemTouchHelper.LEFT)
+                    consumerLeft?.accept(viewHolder.adapterPosition)
+            }
+
+            override fun onChildDraw(
+                c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean
+            ) {
+                when {
+                    dX < 0 -> {
+                        RecyclerViewSwipeDecorator.Builder(context, c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                            .addBackgroundColor(colorLeft)
+                            .addSwipeLeftActionIcon(drawableLeft)
+                            .create()
+                            .decorate()
+                    }
+                    dX > 0 -> {
+                        RecyclerViewSwipeDecorator.Builder(context, c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                            .addBackgroundColor(colorRight)
+                            .addSwipeRightActionIcon(drawableRight)
+                            .create()
+                            .decorate()
                     }
                 }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
-
-            override fun onPayloadTransferUpdate(p0: String, p1: PayloadTransferUpdate) {
-                // noop
-            }
-        }
-    }
-
-    suspend fun getRecyclerCallbackAsync(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback {
-        return withContext(CoroutineScope(IO).coroutineContext) {
-            when (listOrdersType) {
-                ListOrders.ListOrdersType.Pending -> makeRecyclerCallback(
-                    context,
-                    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-                    { integer -> confirmOrder(adapter.getOrderAt(integer)) },
-                    { integer -> deleteOrder(adapter.getOrderAt(integer)) },
-                    ContextCompat.getColor(context, R.color.colorPrimary),
-                    ContextCompat.getColor(context, R.color.red),
-                    R.drawable.ic_send, R.drawable.ic_confirmed
-                )
-                ListOrders.ListOrdersType.Confirmed -> makeRecyclerCallback(
-                    context,
-                    ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
-                    { integer -> markAsDelivered(adapter.getOrderAt(integer)) },
-                    { integer -> undoConfirmOrder(adapter.getOrderAt(integer)) },
-                    ContextCompat.getColor(context, R.color.colorPrimary),
-                    ContextCompat.getColor(context, R.color.colorPrimary),
-                    R.drawable.ic_send, R.drawable.ic_send_rev
-                )
-                ListOrders.ListOrdersType.Delivered -> makeRecyclerCallback(
-                    context,
-                    ItemTouchHelper.LEFT,
-                    null,
-                    { integer -> undoMarkAsDelivered(adapter.getOrderAt(integer)) },
-                    0,
-                    ContextCompat.getColor(context, R.color.colorPrimary),
-                    0, R.drawable.ic_send_rev
-                )
-                else -> makeRecyclerCallback(context, 0, null, null, 0, 0, 0, 0)
-            }
-        }
-    }
-}
-
-private fun makeRecyclerCallback(
-    context: Context,
-    dragDir2: Int,
-    consumerRight: Consumer<Int>?,
-    consumerLeft: Consumer<Int>?,
-    colorRight: Int,
-    colorLeft: Int,
-    drawableRight: Int,
-    drawableLeft: Int
-): ItemTouchHelper.SimpleCallback {
-    return object : ItemTouchHelper.SimpleCallback(0, dragDir2) {
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-            return false
-        }
-
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            if (direction == ItemTouchHelper.RIGHT)
-                consumerRight?.accept(viewHolder.adapterPosition)
-            else if (direction == ItemTouchHelper.LEFT)
-                consumerLeft?.accept(viewHolder.adapterPosition)
-        }
-
-        override fun onChildDraw(
-            c: Canvas,
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            dX: Float,
-            dY: Float,
-            actionState: Int,
-            isCurrentlyActive: Boolean
-        ) {
-            when {
-                dX < 0 -> {
-                    RecyclerViewSwipeDecorator.Builder(
-                        context,
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                        .addBackgroundColor(colorLeft)
-                        .addSwipeLeftActionIcon(drawableLeft)
-                        .create()
-                        .decorate()
-                }
-                dX > 0 -> {
-                    RecyclerViewSwipeDecorator.Builder(
-                        context,
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                        .addBackgroundColor(colorRight)
-                        .addSwipeRightActionIcon(drawableRight)
-                        .create()
-                        .decorate()
-                }
-            }
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
         }
     }
 }

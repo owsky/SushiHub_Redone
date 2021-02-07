@@ -1,6 +1,7 @@
 package com.owsky.sushihubredone.util
 
 import android.app.Application
+import android.content.Context
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
 import kotlinx.coroutines.CoroutineScope
@@ -52,11 +53,12 @@ class Connectivity private constructor(
 
     private fun startDiscovery() {
         val discoveryOptions = DiscoveryOptions.Builder().setStrategy(strategy).build()
-        Nearby.getConnectionsClient(application).startDiscovery(SERVICE_ID, object : EndpointDiscoveryCallback() {
+        val connectionsClient = Nearby.getConnectionsClient(application)
+        connectionsClient.startDiscovery(SERVICE_ID, object : EndpointDiscoveryCallback() {
             override fun onEndpointFound(endpointId: String, discoveredEndpointInfo: DiscoveredEndpointInfo) {
-                Nearby.getConnectionsClient(application).requestConnection("Device B", endpointId, object : ConnectionLifecycleCallback() {
+                connectionsClient.requestConnection("Device B", endpointId, object : ConnectionLifecycleCallback() {
                     override fun onConnectionInitiated(endpointId: String, connectionInfo: ConnectionInfo) {
-                        Nearby.getConnectionsClient(application).acceptConnection(endpointId, callback)
+                        connectionsClient.acceptConnection(endpointId, callback)
                         strendPointId = endpointId
                     }
 
@@ -102,9 +104,9 @@ class Connectivity private constructor(
     companion object {
         @Volatile
         private var INSTANCE: Connectivity? = null
-        fun getInstance(isClient: Boolean, SERVICE_ID: String, callback: PayloadCallback, application: Application) =
+        fun getInstance(isClient: Boolean, SERVICE_ID: String, callback: PayloadCallback, context: Context) =
             INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Connectivity(isClient, SERVICE_ID, callback, application).also { INSTANCE = it }
+                INSTANCE ?: Connectivity(isClient, SERVICE_ID, callback, context.applicationContext as Application).also { INSTANCE = it }
             }
     }
 }

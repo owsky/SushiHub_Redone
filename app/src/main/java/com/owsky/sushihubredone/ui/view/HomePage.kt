@@ -23,11 +23,9 @@ class HomePage : Fragment(R.layout.fragment_homepage) {
             btnJoin.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_scanQRNav) }
             btnCreate.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_configureTableNav) }
         }
-
         val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-        prefs.getString("table_code", null)?.let {
-            ResumeDialog(it).show(parentFragmentManager, null)
-        }
+        if (prefs.contains("table_code"))
+            ResumeDialog(prefs.getString("table_code", null)!!).show(parentFragmentManager, null)
     }
 
     @AndroidEntryPoint

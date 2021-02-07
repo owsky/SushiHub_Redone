@@ -3,8 +3,10 @@
 
     <item
         android:id="@+id/deleteTable"
-        android:title="@string/delete_table" />
+        android:title="@string/delete_table"
+        android:visible="false"/>
     <item
         android:id="@+id/deleteAllTables"
-        android:title="@string/clear_history" />
+        android:title="@string/clear_history"
+        android:visible="false"/>
 </menu>

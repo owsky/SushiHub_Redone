@@ -15,46 +15,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
-class ListOrders() : Fragment(R.layout.fragment_recyclerview) {
-    private var listOrdersType: ListOrdersType? = null
-
-    constructor(listOrdersType: ListOrdersType) : this() {
-        this.listOrdersType = listOrdersType
-    }
+class ListOrders(private val listOrdersType: ListOrdersType) : Fragment(R.layout.fragment_recyclerview) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentRecyclerviewBinding.bind(view)
         val viewModel: OrdersViewModel by viewModels()
-        if (listOrdersType == null) {
-            val arg: ListOrdersArgs by navArgs()
-            listOrdersType = arg.listOrdersType
+        val ordersAdapter = OrdersAdapter()
+        val callback = viewModel.getRecyclerCallback(requireContext(), ordersAdapter, listOrdersType)
+        binding.recyclerView.apply {
+            adapter = ordersAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+            hasFixedSize()
+            callback.let { ItemTouchHelper(it).attachToRecyclerView(this) }
         }
-        val ordersAdapter = OrdersAdapter(listOrdersType!!)
-        lateinit var callback: ItemTouchHelper.SimpleCallback
-        runBlocking {
-            launch { callback = viewModel.getRecyclerCallback(requireContext(), ordersAdapter, listOrdersType!!) }.join()
-        }
-        binding.apply {
-            recyclerView.apply {
-                adapter = ordersAdapter
-                layoutManager = LinearLayoutManager(requireContext())
-                hasFixedSize()
-                callback.let { ItemTouchHelper(it).attachToRecyclerView(recyclerView) }
-            }
-        }
-        viewModel.getOrders(listOrdersType!!).observe(requireActivity(), ordersAdapter::submitList)
+        viewModel.getOrders(listOrdersType).observe(requireActivity(), ordersAdapter::submitList)
     }
-
-//	override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//		super.onCreateOptionsMenu(menu, inflater)
-//		arguments?.let {
-//			val args = ListOrdersArgs.fromBundle(it)
-//			if (args.listOrdersType == ListOrdersType.History)
-//				inflater.inflate(R.menu.history_overflow, menu)
-//			menu.findItem(R.id.deleteTable).isVisible = true
-//		}
-//	}
 
     enum class ListOrdersType {
         Pending,

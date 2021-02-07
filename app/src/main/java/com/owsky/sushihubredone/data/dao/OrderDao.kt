@@ -13,7 +13,7 @@ interface OrderDao : BaseDao<Order> {
     @Query("SELECT * FROM `Order` WHERE tableCode = :code")
     fun getAllByTable(code: String): LiveData<List<Order>>
 
-    @Query("SELECT SUM(price) FROM `Order` WHERE tableCode = :table AND NOT receivedFromSlave")
+    @Query("SELECT COALESCE(SUM(price), 0) FROM `Order` WHERE tableCode = :table AND NOT receivedFromSlave")
     suspend fun getExtraPrice(table: String): Double
 
     @Query("SELECT * FROM `Order` WHERE status = :status AND tableCode = :table AND NOT receivedFromSlave")

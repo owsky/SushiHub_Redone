@@ -10,9 +10,6 @@ import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentCheckOutBinding
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.joinAll
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 
@@ -21,18 +18,10 @@ class CheckOutPage : Fragment(R.layout.fragment_check_out) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentCheckOutBinding.bind(view)
-
         val viewModel: OrdersViewModel by viewModels()
         val locale = requireActivity().resources.configuration.locales.get(0)
-        val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-        val tableCode = prefs.getString("table_code", null)!!
-        var menuPrice = 0.0
-        var extraPrice = 0.0
-        runBlocking {
-            launch { menuPrice = viewModel.getMenuPrice(tableCode) }
-            launch { extraPrice = viewModel.getExtraPrice() }
-            joinAll()
-        }
+        val menuPrice = viewModel.getMenuPrice()
+        val extraPrice = viewModel.getExtraPrice()
 
         val df = DecimalFormat("0", DecimalFormatSymbols.getInstance())
         df.maximumFractionDigits = 340
@@ -41,7 +30,8 @@ class CheckOutPage : Fragment(R.layout.fragment_check_out) {
             checkoutExtra.text = String.format(locale, "Extras Price: %s €", df.format(extraPrice))
             checkoutTotal.text = String.format(locale, "Total: %s €", df.format(menuPrice + extraPrice))
             checkoutDone.setOnClickListener {
-                viewModel.checkout(requireActivity(), tableCode)
+                val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+                viewModel.checkout(requireActivity(), prefs.getString("table_code", null)!!)
                 findNavController().navigate(R.id.action_checkOutPage_to_homePageNav)
             }
         }

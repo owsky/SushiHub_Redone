@@ -12,16 +12,17 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateTableViewModel @Inject constructor(private val tableRepository: TableRepository, private val prefs: SharedPreferences, application: Application) :
+class CreateTableViewModel @Inject constructor(private val tableRepository: TableRepository, application: Application) :
     AndroidViewModel(application) {
 
     fun createTable(tableCode: String?, tableName: String, menuPrice: Double) {
-        if (tableCode != null) {
-            tableRepository.createTable(tableCode, tableName, menuPrice)
-        } else {
-            runBlocking {
-                launch { tableRepository.createTable(null, tableName, menuPrice) }.join()
-            }
+        runBlocking {
+            launch {
+                if (tableCode != null) {
+                    tableRepository.createTable(tableCode, tableName, menuPrice)
+                } else {
+                    tableRepository.createTable(null, tableName, menuPrice) }
+            }.join()
         }
     }
 
