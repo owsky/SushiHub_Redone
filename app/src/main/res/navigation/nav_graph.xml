@@ -6,7 +6,7 @@
     app:startDestination="@id/homePageNav">
     <fragment
         android:id="@+id/homePageNav"
-        android:name="com.owsky.sushihubredone.view.HomePage"
+        android:name="com.owsky.sushihubredone.ui.view.HomePage"
         android:label="HomePage"
         tools:layout="@layout/fragment_homepage">
         <action
@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/configureTableNav"
-        android:name="com.owsky.sushihubredone.view.ConfigureTablePage"
+        android:name="com.owsky.sushihubredone.ui.view.ConfigureTablePage"
         android:label="Configure a new table"
         tools:layout="@layout/fragment_configure_table">
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/scanQRNav"
-        android:name="com.owsky.sushihubredone.view.ScanQRPage"
+        android:name="com.owsky.sushihubredone.ui.view.ScanQRPage"
         android:label="Join a table"
         tools:layout="@layout/fragment_qr_scan">
         <action
@@ -36,7 +36,7 @@
     </fragment>
     <fragment
         android:id="@+id/configureUserPage"
-        android:name="com.owsky.sushihubredone.view.ConfigureUserPage"
+        android:name="com.owsky.sushihubredone.ui.view.ConfigureUserPage"
         android:label="Configure User"
         tools:layout="@layout/fragment_configure_user">
         <action
@@ -45,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/tablePage"
-        android:name="com.owsky.sushihubredone.view.TablePage"
+        android:name="com.owsky.sushihubredone.ui.view.TablePage"
         android:label="Table"
         tools:layout="@layout/fragment_table">
         <action
@@ -63,7 +63,7 @@
     </fragment>
     <fragment
         android:id="@+id/generateQRPage"
-        android:name="com.owsky.sushihubredone.view.GenerateQRPage"
+        android:name="com.owsky.sushihubredone.ui.view.GenerateQRPage"
         android:label="Generate QR"
         tools:layout="@layout/fragment_qr_generator">
         <action
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/historyNav"
-        android:name="com.owsky.sushihubredone.view.ListOrders"
+        android:name="com.owsky.sushihubredone.ui.view.ListOrders"
         android:label="History"
         tools:layout="@layout/fragment_recyclerview">
         <action
@@ -85,26 +85,26 @@
     </fragment>
     <fragment
         android:id="@+id/allOrders"
-        android:name="com.owsky.sushihubredone.view.ListOrders"
+        android:name="com.owsky.sushihubredone.ui.view.ListOrders"
         android:label="All Orders"
         tools:layout="@layout/fragment_recyclerview" >
         <argument
             android:name="listOrdersType"
-            app:argType="com.owsky.sushihubredone.view.ListOrders$ListOrdersType" />
+            app:argType="com.owsky.sushihubredone.ui.view.ListOrders$ListOrdersType" />
     </fragment>
     <fragment
         android:id="@+id/historyDetails"
-        android:name="com.owsky.sushihubredone.view.ListOrders"
+        android:name="com.owsky.sushihubredone.ui.view.ListOrders"
         android:label="History Details"
         tools:layout="@layout/fragment_recyclerview" />
     <fragment
         android:id="@+id/insertOrderPage"
-        android:name="com.owsky.sushihubredone.view.InsertOrderPage"
+        android:name="com.owsky.sushihubredone.ui.view.InsertOrderPage"
         android:label="New order"
         tools:layout="@layout/fragment_user_input" />
     <fragment
         android:id="@+id/checkOutPage"
-        android:name="com.owsky.sushihubredone.view.CheckOutPage"
+        android:name="com.owsky.sushihubredone.ui.view.CheckOutPage"
         android:label="Checkout"
         tools:layout="@layout/fragment_check_out">
         <action

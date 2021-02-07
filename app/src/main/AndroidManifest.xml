@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:name=".SushiHubApp"
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"
         android:hardwareAccelerated="true"
@@ -19,7 +20,7 @@
         android:roundIcon="@drawable/sushi"
         android:supportsRtl="true"
         android:theme="@style/Theme.SushiHubRedone">
-        <activity android:name=".view.MainActivity">
+        <activity android:name="com.owsky.sushihubredone.ui.view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
