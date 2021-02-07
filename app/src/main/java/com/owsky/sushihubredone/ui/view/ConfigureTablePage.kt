@@ -36,9 +36,7 @@ class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {
                 }
                 val restaurantName = configureName.text.toString()
                 val price = menuPrice.text.toString().toDouble()
-                runBlocking {
-                    launch { model.createTable(null, restaurantName, price) }.join()
-                }
+                model.createTable(null, restaurantName, price)
                 findNavController().navigate(R.id.action_configureTableNav_to_generateQRPage)
             }
         }

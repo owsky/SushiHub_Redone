@@ -51,7 +51,7 @@ class TableRepository @Inject constructor(private val tableDao: TableDao, privat
         }
     }
 
-    suspend fun getTableAsync(): Table? {
+    suspend fun getCurrentTable(): Table? {
         return tableDao.getTable(prefs.getString("table_code", null)!!)
     }
 

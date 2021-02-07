@@ -32,16 +32,9 @@ class GenerateQRPage : Fragment(R.layout.fragment_qr_generator) {
             view.findViewById<Button>(R.id.doneqr).visibility = View.GONE
         else
             view.findViewById<Button>(R.id.doneqr).setOnClickListener { findNavController().navigate(R.id.action_generateQRPage_to_configureUserPage) }
-        getTable()
-    }
-
-    private fun getTable() = runBlocking {
-        var table: Table? = null
-        async {
-            table = viewModel.getTableInfoAsync()
-        }.await()
-        data = TextUtils.join(";", listOf(table?.id, table?.restaurant, table?.menuPrice))
-        generateQR()
+            val table = viewModel.getCurrentTable()!!
+            data = TextUtils.join(";", listOf(table.id, table.restaurant, table.menuPrice))
+            generateQR()
     }
 
     private fun generateQR() {

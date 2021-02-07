@@ -4,10 +4,11 @@ import android.app.Application
 import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import com.owsky.sushihubredone.data.TableRepository
-import com.owsky.sushihubredone.data.entities.Table
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,11 +19,15 @@ class CreateTableViewModel @Inject constructor(private val tableRepository: Tabl
         if (tableCode != null) {
             tableRepository.createTable(tableCode, tableName, menuPrice)
         } else {
-            tableRepository.createTable(null, tableName, menuPrice)
+            runBlocking {
+                launch { tableRepository.createTable(null, tableName, menuPrice) }.join()
+            }
         }
     }
 
-    suspend fun getTableInfoAsync(): Table? {
-        return tableRepository.getTableAsync()
+    fun getCurrentTable() = runBlocking {
+        withContext(Dispatchers.Default) {
+            tableRepository.getCurrentTable()
+        }
     }
 }
