@@ -1,7 +1,6 @@
 package com.owsky.sushihubredone.ui.viewmodel
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import com.owsky.sushihubredone.data.TableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,12 +15,14 @@ class CreateTableViewModel @Inject constructor(private val tableRepository: Tabl
     AndroidViewModel(application) {
 
     fun createTable(tableCode: String?, tableName: String, menuPrice: Double) {
+        // this coroutine is practically synchronous to avoid crashes/missing data while rendering the QR code
         runBlocking {
             launch {
                 if (tableCode != null) {
                     tableRepository.createTable(tableCode, tableName, menuPrice)
                 } else {
-                    tableRepository.createTable(null, tableName, menuPrice) }
+                    tableRepository.createTable(null, tableName, menuPrice)
+                }
             }.join()
         }
     }

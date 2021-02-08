@@ -7,7 +7,7 @@ import com.owsky.sushihubredone.data.OrderRepository
 import com.owsky.sushihubredone.data.TableRepository
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.Table
-import com.owsky.sushihubredone.di.Impl2
+import com.owsky.sushihubredone.di.RepoSansConnect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(
     application: Application,
     private val tableRepository: TableRepository,
-    @Impl2 private val orderRepository: OrderRepository
+    @RepoSansConnect private val orderRepository: OrderRepository
 ) : AndroidViewModel(application) {
     val tablesHistory: LiveData<List<Table>> by lazy { tableRepository.getAllButCurrent() }
 

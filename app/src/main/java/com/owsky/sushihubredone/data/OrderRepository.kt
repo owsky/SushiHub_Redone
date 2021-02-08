@@ -1,10 +1,8 @@
 package com.owsky.sushihubredone.data
 
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Canvas
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.lifecycle.LiveData
@@ -14,7 +12,6 @@ import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.data.dao.OrderDao
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.OrderStatus
-import com.owsky.sushihubredone.data.entities.Table
 import com.owsky.sushihubredone.ui.view.ListOrders
 import com.owsky.sushihubredone.ui.view.OrdersAdapter
 import com.owsky.sushihubredone.util.Connectivity
@@ -124,7 +121,8 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
         if (prefs.contains("is_master"))
             cleanDatabase()
         prefs.edit().clear().apply()
-        this.connectivity?.disconnect()
+//        this.connectivity?.disconnect()
+        Connectivity.disconnect()
     }
 
     fun getOrderHistory(tableCode: String): LiveData<List<Order>> {

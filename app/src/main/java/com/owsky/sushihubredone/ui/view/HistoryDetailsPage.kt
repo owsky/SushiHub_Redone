@@ -24,7 +24,6 @@ class HistoryDetailsPage : Fragment(R.layout.fragment_recyclerview) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         val binding = FragmentRecyclerviewBinding.bind(view)
-
         val ordersAdapter = OrdersAdapter()
         binding.recyclerView.apply {
             adapter = ordersAdapter

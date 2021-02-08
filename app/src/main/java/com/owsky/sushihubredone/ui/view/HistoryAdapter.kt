@@ -21,7 +21,6 @@ class HistoryAdapter : ListAdapter<Table, HistoryAdapter.TableViewHolder>(DiffCa
         holder.itemView.setOnClickListener(Navigation.createNavigateOnClickListener(action))
     }
 
-
     class TableViewHolder(private val binding: HistoryItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(table: Table) {
@@ -36,6 +35,6 @@ class HistoryAdapter : ListAdapter<Table, HistoryAdapter.TableViewHolder>(DiffCa
         override fun areItemsTheSame(oldItem: Table, newItem: Table): Boolean = oldItem == newItem
 
         override fun areContentsTheSame(oldItem: Table, newItem: Table): Boolean =
-             oldItem.dateCreation == newItem.dateCreation && oldItem.restaurant == newItem.restaurant && oldItem.menuPrice == newItem.menuPrice
+            oldItem.dateCreation == newItem.dateCreation && oldItem.restaurant == newItem.restaurant && oldItem.menuPrice == newItem.menuPrice
     }
 }

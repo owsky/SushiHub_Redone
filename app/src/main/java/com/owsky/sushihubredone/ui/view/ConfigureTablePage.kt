@@ -3,8 +3,6 @@ package com.owsky.sushihubredone.ui.view
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,10 +11,6 @@ import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentConfigureTableBinding
 import com.owsky.sushihubredone.ui.viewmodel.CreateTableViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.util.*
 
 @AndroidEntryPoint
 class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {

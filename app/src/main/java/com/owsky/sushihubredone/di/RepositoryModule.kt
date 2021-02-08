@@ -16,12 +16,12 @@ import javax.inject.Qualifier
 @InstallIn(ViewModelComponent::class)
 object RepositoryModule {
 
-    @Impl1
+    @RepoWithConnect
     @Provides
     fun provideOrderRepository(localDataSource: OrderDao, prefs: SharedPreferences, connectivity: Connectivity) =
         OrderRepository(localDataSource, prefs, connectivity)
 
-    @Impl2
+    @RepoSansConnect
     @Provides
     fun provideOrderRepositorySansConn(localDataSource: OrderDao, prefs: SharedPreferences) =
         OrderRepository(localDataSource, prefs, null)
@@ -32,8 +32,8 @@ object RepositoryModule {
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class Impl1
+annotation class RepoWithConnect
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class Impl2
+annotation class RepoSansConnect

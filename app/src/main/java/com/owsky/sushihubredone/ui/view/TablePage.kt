@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owsky.sushihubredone.R
+import com.owsky.sushihubredone.databinding.FragmentTableBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,16 +38,16 @@ class TablePage : Fragment(R.layout.fragment_table) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+        val binding = FragmentTableBinding.bind(view)
         prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-        view.findViewById<FloatingActionButton>(R.id.fab).setOnClickListener {
+        binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_tablePage_to_insertOrderPage)
         }
 
-        val viewPager2 = view.findViewById<ViewPager2>(R.id.viewPager)
+        val viewPager2 = binding.viewPager
         viewPager2.adapter = TableAdapter(this)
         viewPager2.isUserInputEnabled = false
-        val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
-        val tabLayoutMediator = TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
+        val tabLayoutMediator = TabLayoutMediator(binding.tabLayout, viewPager2) { tab, position ->
             when (position) {
                 0 -> {
                     tab.text = "Pending"

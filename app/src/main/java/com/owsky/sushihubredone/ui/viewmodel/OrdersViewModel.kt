@@ -1,9 +1,7 @@
 package com.owsky.sushihubredone.ui.viewmodel
 
 import android.app.Application
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelStoreOwner
@@ -11,20 +9,18 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.owsky.sushihubredone.data.OrderRepository
 import com.owsky.sushihubredone.data.TableRepository
 import com.owsky.sushihubredone.data.entities.Order
-import com.owsky.sushihubredone.di.Impl1
+import com.owsky.sushihubredone.di.RepoWithConnect
 import com.owsky.sushihubredone.ui.view.ListOrders
 import com.owsky.sushihubredone.ui.view.OrdersAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    @Impl1 private val orderRepository: OrderRepository, private val tableRepository: TableRepository, application: Application
+    @RepoWithConnect private val orderRepository: OrderRepository, private val tableRepository: TableRepository, application: Application
 ) : AndroidViewModel(application) {
 
     fun getOrders(type: ListOrders.ListOrdersType): LiveData<List<Order>> {
@@ -34,10 +30,6 @@ class OrdersViewModel @Inject constructor(
             ListOrders.ListOrdersType.Delivered -> orderRepository.deliveredOrders!!
             ListOrders.ListOrdersType.Synchronized -> orderRepository.synchronizedOrders!!
         }
-    }
-
-    fun getOrdersByTable(tableCode: String): LiveData<List<Order>> {
-        return orderRepository.getOrderHistory(tableCode)
     }
 
     fun insertOrder(order: Order, quantity: Int) {

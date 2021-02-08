@@ -2,7 +2,6 @@ package com.owsky.sushihubredone.ui.view
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import dagger.hilt.android.AndroidEntryPoint
 
 class TableAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 

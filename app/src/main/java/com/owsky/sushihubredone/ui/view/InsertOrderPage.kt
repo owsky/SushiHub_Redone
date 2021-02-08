@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -15,21 +14,16 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.switchmaterial.SwitchMaterial
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.OrderStatus
+import com.owsky.sushihubredone.databinding.FragmentUserInputBinding
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
-    private lateinit var code: EditText
-    private lateinit var desc: EditText
-    private lateinit var quantity: EditText
-    private lateinit var price: EditText
-    private lateinit var priceTextView: TextView
-    private var isExtra = false
+    private lateinit var binding: FragmentUserInputBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,31 +36,24 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        code = view.findViewById(R.id.addCode)
-        desc = view.findViewById(R.id.addDesc)
-        quantity = view.findViewById(R.id.addQuantity)
-        price = view.findViewById(R.id.addPrice)
-        priceTextView = view.findViewById(R.id.priceTextView)
-        val saveAndQuit = view.findViewById<Button>(R.id.saveAndQuit)
-        val saveAndNew = view.findViewById<Button>(R.id.saveAndNew)
-        val switchMaterial = view.findViewById<SwitchMaterial>(R.id.switchExtra)
-        switchMaterial.setOnCheckedChangeListener { _, _ -> flipExtra() }
+        binding = FragmentUserInputBinding.bind(view)
+        binding.switchExtra.setOnCheckedChangeListener { _, _ -> flipExtra() }
+        binding.addDesc.imeOptions = EditorInfo.IME_ACTION_DONE
 
-        if (!isExtra)
-            desc.imeOptions = EditorInfo.IME_ACTION_DONE
-
-        saveAndQuit.setOnClickListener {
+        binding.saveAndQuit.setOnClickListener {
             if (saveOrder())
                 findNavController().navigateUp()
         }
 
-        saveAndNew.setOnClickListener {
+        binding.saveAndNew.setOnClickListener {
             if (saveOrder()) {
-                code.text = null
-                desc.text = null
-                quantity.text = null
-                price.text = null
-                code.requestFocus()
+                binding.apply {
+                    binding.addCode.text = null
+                    binding.addDesc.text = null
+                    binding.addQuantity.text = null
+                    binding.addPrice.text = null
+                    binding.addCode.requestFocus()
+                }
             }
         }
     }
@@ -75,23 +62,23 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
         val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
         val viewModel: OrdersViewModel by viewModels()
         val tableCode = prefs.getString("table_code", null)!!
-        val dishCode = code.text.toString()
+        val dishCode = binding.addCode.text.toString()
         val status = OrderStatus.Pending
-        val description = desc.text.toString()
+        val description = binding.addDesc.text.toString()
         var extraPrice = 0.0
-        if (price.text.isNotEmpty()) {
-            extraPrice = price.text.toString().toDouble()
+        if (binding.addPrice.text.isNotEmpty()) {
+            extraPrice = binding.addPrice.text.toString().toDouble()
         }
 
         when {
             dishCode.trim().isEmpty() ->
                 Toast.makeText(requireContext(), "Insert the dish code", Toast.LENGTH_SHORT).show()
-            quantity.text.toString().isEmpty() ->
+            binding.addQuantity.text.toString().isEmpty() ->
                 Toast.makeText(requireContext(), "Insert the quantity", Toast.LENGTH_SHORT).show()
             else -> {
                 val username = prefs.getString("username", null)!!
                 val newOrder = Order(dishCode, description, status, tableCode, username, false, extraPrice)
-                viewModel.insertOrder(newOrder, quantity.text.toString().toInt())
+                viewModel.insertOrder(newOrder, binding.addQuantity.text.toString().toInt())
                 Snackbar.make(requireActivity().findViewById(android.R.id.content), "Undo?", BaseTransientBottomBar.LENGTH_LONG)
                     .setAction("Undo?") { viewModel.undoInsert() }
                     .setAnchorView(requireActivity().findViewById(R.id.saveAndQuit)).show()
@@ -102,17 +89,17 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
     }
 
     private fun flipExtra() {
-        if (isExtra) {
-            priceTextView.isVisible = false
-            price.isVisible = false
-            isExtra = false
-            desc.imeOptions = EditorInfo.IME_ACTION_DONE
-        } else {
-            priceTextView.isVisible = true
-            price.isVisible = true
-            isExtra = true
-            desc.nextFocusDownId = price.id
-            desc.imeOptions = EditorInfo.TYPE_NULL
+        binding.apply {
+            if (addPrice.isVisible) {
+                addPrice.isVisible = false
+                priceTextView.isVisible = false
+                addDesc.imeOptions = EditorInfo.IME_ACTION_DONE
+            } else {
+                priceTextView.isVisible = true
+                addPrice.isVisible = true
+                addDesc.nextFocusDownId = binding.addPrice.id
+                addDesc.imeOptions = EditorInfo.TYPE_NULL
+            }
         }
     }
 }

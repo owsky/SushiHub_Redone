@@ -41,7 +41,7 @@ class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             val requestCameraLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
                 if (!result) {
-                        Toast.makeText(requireContext(), "SushiHub requires the Camera permission to scan the QR codes", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "SushiHub requires the Camera permission to scan the QR codes", Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
                 }
             }
