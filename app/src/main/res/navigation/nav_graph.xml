@@ -58,8 +58,8 @@
             android:id="@+id/action_tablePage_to_checkOutPage"
             app:destination="@id/checkOutPage" />
         <action
-            android:id="@+id/action_tablePage_to_allOrders"
-            app:destination="@id/allOrders" />
+            android:id="@+id/action_tablePage_to_allOrdersPage"
+            app:destination="@id/allOrdersPage" />
     </fragment>
     <fragment
         android:id="@+id/generateQRPage"
@@ -82,15 +82,6 @@
         <action
             android:id="@+id/action_historyNav_to_historyDetails"
             app:destination="@id/historyDetails" />
-    </fragment>
-    <fragment
-        android:id="@+id/allOrders"
-        android:name="com.owsky.sushihubredone.ui.view.ListOrders"
-        android:label="All Orders"
-        tools:layout="@layout/fragment_recyclerview" >
-        <argument
-            android:name="listOrdersType"
-            app:argType="com.owsky.sushihubredone.ui.view.ListOrders$ListOrdersType" />
     </fragment>
     <fragment
         android:id="@+id/historyDetails"
@@ -116,5 +107,15 @@
             app:destination="@id/homePageNav"
             app:popUpTo="@id/checkOutPage"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/allOrdersPage"
+        android:name="com.owsky.sushihubredone.ui.view.AllOrdersPage"
+        android:label="All orders"
+        tools:layout="@layout/fragment_recyclerview">
+        <argument
+            android:name="listOrdersType"
+            app:argType="com.owsky.sushihubredone.ui.view.ListOrders$ListOrdersType"
+            android:defaultValue="Synchronized" />
     </fragment>
 </navigation>

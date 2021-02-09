@@ -81,7 +81,7 @@ class TablePage : Fragment(R.layout.fragment_table) {
                 findNavController().navigate(action)
             }
             R.id.toAllOrders -> {
-                val action = TablePageDirections.actionTablePageToAllOrders(ListOrders.ListOrdersType.Synchronized)
+                val action = TablePageDirections.actionTablePageToAllOrdersPage()
                 findNavController().navigate(action)
             }
             R.id.toCheckout -> {
