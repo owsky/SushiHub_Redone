@@ -18,13 +18,14 @@ object RepositoryModule {
 
     @RepoWithConnect
     @Provides
-    fun provideOrderRepository(localDataSource: OrderDao, prefs: SharedPreferences, connectivity: Connectivity) =
-        OrderRepository(localDataSource, prefs, connectivity)
+    fun provideOrderRepository(orderDao: OrderDao, prefs: SharedPreferences, connectivity: Connectivity): OrderRepository {
+        return OrderRepository(orderDao, prefs, connectivity)
+    }
 
     @RepoSansConnect
     @Provides
-    fun provideOrderRepositorySansConn(localDataSource: OrderDao, prefs: SharedPreferences) =
-        OrderRepository(localDataSource, prefs, null)
+    fun provideOrderRepositorySansConn(orderDao: OrderDao, prefs: SharedPreferences) =
+        OrderRepository(orderDao, prefs, null)
 
     @Provides
     fun provideTableRepository(tableDao: TableDao, prefs: SharedPreferences) = TableRepository(tableDao, prefs)

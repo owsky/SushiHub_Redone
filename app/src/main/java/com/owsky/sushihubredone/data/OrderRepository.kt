@@ -8,6 +8,7 @@ import androidx.core.util.Consumer
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.nearby.Nearby
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.data.dao.OrderDao
 import com.owsky.sushihubredone.data.entities.Order
@@ -69,7 +70,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity?.send(Order.toByteArray(order))
+                connectivity?.sendPayload(Order.toByteArray(order))
             }
         }
     }
@@ -80,7 +81,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity?.send(Order.toByteArray(order))
+                connectivity?.sendPayload(Order.toByteArray(order))
             }
         }
     }
@@ -91,7 +92,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity?.send(Order.toByteArray(order))
+                connectivity?.sendPayload(Order.toByteArray(order))
             }
         }
     }
@@ -102,7 +103,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
             updateOrder(order)
 
             if (!prefs.contains("is_master")) {
-                connectivity?.send(Order.toByteArray(order))
+                connectivity?.sendPayload(Order.toByteArray(order))
             }
         }
     }
@@ -121,8 +122,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
         if (prefs.contains("is_master"))
             cleanDatabase()
         prefs.edit().clear().apply()
-//        this.connectivity?.disconnect()
-        Connectivity.disconnect()
+        connectivity?.disconnect()
     }
 
     fun getOrderHistory(tableCode: String): LiveData<List<Order>> {
