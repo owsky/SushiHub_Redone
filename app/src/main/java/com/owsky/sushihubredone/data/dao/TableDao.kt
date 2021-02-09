@@ -14,7 +14,7 @@ interface TableDao : BaseDao<Table> {
     @Query("SELECT * FROM `Table` WHERE isCheckedOut")
     fun getAllButCurrent(): LiveData<List<Table>>
 
-    @Query("SELECT menuPrice FROM `Table` WHERE id = :table")
+    @Query("SELECT COALESCE(SUM(menuPrice), 0) FROM `Table` WHERE id = :table")
     suspend fun getMenuPrice(table: String): Double
 
     @Query("DELETE FROM `Table`")
