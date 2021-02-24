@@ -40,29 +40,21 @@ class OrdersViewModel @Inject constructor(
         orderRepository.undoLastInsert()
     }
 
+    // the coroutines need to be blocking since the data is required to create the view
     fun getMenuPrice(): Double = runBlocking {
-        withContext(Dispatchers.Default) {
             tableRepository.getMenuPrice()
-        }
     }
-
     fun getExtraPrice(): Double = runBlocking {
-        withContext(Dispatchers.Default) {
             orderRepository.getExtraPrice()
-        }
     }
 
     fun checkout(viewModelStoreOwner: ViewModelStoreOwner, tableCode: String) {
-        runBlocking {
             orderRepository.checkOut()
             tableRepository.checkoutTable(tableCode)
             viewModelStoreOwner.viewModelStore.clear()
-        }
     }
 
-    fun getRecyclerCallback(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback = runBlocking {
-        withContext(Dispatchers.Default) {
-            orderRepository.getRecyclerCallback(context, adapter, listOrdersType)
-        }
+    fun getRecyclerCallback(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback {
+            return orderRepository.getRecyclerCallback(context, adapter, listOrdersType)
     }
 }

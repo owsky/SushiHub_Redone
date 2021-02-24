@@ -47,7 +47,6 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
     }
 
     private var lastInsertedIds = LongArray(99)
-
     fun insertOrder(order: Order, quantity: Int) {
         CoroutineScope(IO).launch { lastInsertedIds = orderDao.insertAll(*Array(quantity) { order }) }
     }
@@ -109,9 +108,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
     }
 
     suspend fun getExtraPrice(): Double {
-        return withContext(CoroutineScope(IO).coroutineContext) {
-            orderDao.getExtraPrice(table!!)
-        }
+        return orderDao.getExtraPrice(table!!)
     }
 
     private fun cleanDatabase() {

@@ -13,11 +13,7 @@ import javax.inject.Inject
 
 class TableRepository @Inject constructor(private val tableDao: TableDao, private val prefs: SharedPreferences) {
 
-    suspend fun getMenuPrice(): Double {
-        return withContext(CoroutineScope(IO).coroutineContext) {
-            tableDao.getMenuPrice(prefs.getString("table_code", null)!!)
-        }
-    }
+    suspend fun getMenuPrice() = tableDao.getMenuPrice(prefs.getString("table_code", null)!!)
 
     private suspend fun getTable(tableCode: String) = tableDao.getTable(tableCode)
 
@@ -25,10 +21,12 @@ class TableRepository @Inject constructor(private val tableDao: TableDao, privat
         return tableDao.getAllButCurrent()
     }
 
-    suspend fun checkoutTable(tableCode: String) {
-        getTable(tableCode)?.let {
-            it.isCheckedOut = true
-            tableDao.update(it)
+    fun checkoutTable(tableCode: String) {
+        CoroutineScope(IO).launch {
+            getTable(tableCode)?.let {
+                it.isCheckedOut = true
+                tableDao.update(it)
+            }
         }
     }
 

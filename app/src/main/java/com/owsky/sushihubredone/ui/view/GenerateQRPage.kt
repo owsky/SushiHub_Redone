@@ -30,7 +30,7 @@ class GenerateQRPage : Fragment(R.layout.fragment_qr_generator) {
             binding.doneqr.visibility = View.GONE
         else
             binding.doneqr.setOnClickListener { findNavController().navigate(R.id.action_generateQRPage_to_configureUserPage) }
-        val table = viewModel.getCurrentTable()!!
+        val table = viewModel.getCurrentTable()!! //TODO
         data = TextUtils.join(";", listOf(table.id, table.restaurant, table.menuPrice))
         generateQR()
     }

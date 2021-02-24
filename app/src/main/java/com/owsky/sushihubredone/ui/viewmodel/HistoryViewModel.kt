@@ -9,7 +9,11 @@ import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.Table
 import com.owsky.sushihubredone.di.RepoSansConnect
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +28,9 @@ class HistoryViewModel @Inject constructor(
         tableRepository.deleteAllTables()
     }
 
-    fun getOrders(tableCode: String): LiveData<List<Order>> = runBlocking { orderRepository.getOrderHistory(tableCode) }
+    fun getOrders(tableCode: String): LiveData<List<Order>> {
+        return orderRepository.getOrderHistory(tableCode)
+    }
 
     fun deleteTable(table: Table) {
         tableRepository.deleteTable(table)

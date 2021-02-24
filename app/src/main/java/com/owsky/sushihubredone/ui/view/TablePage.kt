@@ -91,7 +91,7 @@ class TablePage : Fragment(R.layout.fragment_table) {
         return super.onOptionsItemSelected(item)
     }
 
-    private class ExitDialog : DialogFragment() {
+    class ExitDialog : DialogFragment() {
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Do you want to quit the app?")
