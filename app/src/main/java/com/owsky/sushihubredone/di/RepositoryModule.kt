@@ -1,5 +1,7 @@
 package com.owsky.sushihubredone.di
 
+import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
 import com.owsky.sushihubredone.data.OrderRepository
 import com.owsky.sushihubredone.data.TableRepository
@@ -10,31 +12,19 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
-    @RepoWithConnect
     @Provides
-    fun provideOrderRepository(orderDao: OrderDao, prefs: SharedPreferences, connectivity: Connectivity): OrderRepository {
-        return OrderRepository(orderDao, prefs, connectivity)
+    fun provideOrderRepository(@ApplicationContext context: Context, orderDao: OrderDao, prefs: SharedPreferences, connectivity: Connectivity): OrderRepository {
+        return OrderRepository(context as Application, orderDao, prefs, connectivity)
     }
-
-    @RepoSansConnect
-    @Provides
-    fun provideOrderRepositorySansConn(orderDao: OrderDao, prefs: SharedPreferences) =
-        OrderRepository(orderDao, prefs, null)
 
     @Provides
     fun provideTableRepository(tableDao: TableDao, prefs: SharedPreferences) = TableRepository(tableDao, prefs)
 }
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RepoWithConnect
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class RepoSansConnect

@@ -1,5 +1,6 @@
 package com.owsky.sushihubredone.data
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Canvas
@@ -23,27 +24,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class OrderRepository @Inject constructor(private val orderDao: OrderDao, private val prefs: SharedPreferences, private val connectivity: Connectivity?) {
+class OrderRepository @Inject constructor(private val application: Application, private val orderDao: OrderDao, private val prefs: SharedPreferences, private val connectivity: Connectivity?) {
     private val table = prefs.getString("table_code", null)
-    val pendingOrders by lazy {
-        if (table != null) {
-            orderDao.getAllByStatus(OrderStatus.Pending, table)
-        } else null
+
+    fun getOrdersLiveData(orderStatus: OrderStatus): LiveData<List<Order>> {
+        return orderDao.getAllByStatus(orderStatus, table!!)
     }
-    val confirmedOrders by lazy {
-        if (table != null) {
-            orderDao.getAllByStatus(OrderStatus.Confirmed, table)
-        } else null
-    }
-    val deliveredOrders by lazy {
-        if (table != null) {
-            orderDao.getAllByStatus(OrderStatus.Delivered, table)
-        } else null
-    }
-    val synchronizedOrders by lazy {
-        if (table != null) {
-            orderDao.getAllSynchronized(table)
-        } else null
+
+    fun getAllSynchronized(): LiveData<List<Order>> {
+        return orderDao.getAllSynchronized(table!!)
     }
 
     private var lastInsertedIds = LongArray(99)
@@ -119,7 +108,7 @@ class OrderRepository @Inject constructor(private val orderDao: OrderDao, privat
         if (prefs.contains("is_master"))
             cleanDatabase()
         prefs.edit().clear().apply()
-        connectivity?.disconnect()
+        Connectivity.disconnect(application)
     }
 
     fun getOrderHistory(tableCode: String): LiveData<List<Order>> {

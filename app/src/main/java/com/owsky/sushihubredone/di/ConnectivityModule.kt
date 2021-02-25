@@ -1,7 +1,9 @@
 package com.owsky.sushihubredone.di
 
+import android.app.Application
 import android.content.ContentValues
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
@@ -9,48 +11,33 @@ import com.owsky.sushihubredone.data.dao.OrderDao
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.OrderStatus
 import com.owsky.sushihubredone.util.Connectivity
-import com.owsky.sushihubredone.util.ConnectivityMaster
-import com.owsky.sushihubredone.util.ConnectivitySlave
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Qualifier
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object ConnectivityModule {
 
-//    @Provides
-//    fun provideConnectivity(prefs: SharedPreferences, payloadCallback: PayloadCallback, @ApplicationContext context: Context): Connectivity {
-//        return Connectivity.getInstance(prefs.contains("is_master"), prefs.getString("table_code", null)!!, payloadCallback, context)
-//    }
-
     @Provides
-    fun provideConnectivity(@ApplicationContext context: Context, @Master connectionLifecycleCallback: ConnectionLifecycleCallback, endpointDiscoveryCallback: EndpointDiscoveryCallback): Connectivity {
-        val prefs = context.getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+    fun provideConnectivity(
+        @ApplicationContext context: Context,
+        prefs: SharedPreferences,
+        @Master connectionLifecycleCallback: ConnectionLifecycleCallback,
+        endpointDiscoveryCallback: EndpointDiscoveryCallback,
+    ): Connectivity {
         return if (prefs.contains("is_master")) {
-            ConnectivityMaster(context, connectionLifecycleCallback)
+            Connectivity(context as Application, prefs, connectionLifecycleCallback, null)
         } else {
-            ConnectivitySlave(context, endpointDiscoveryCallback)
+            Connectivity(context as Application, prefs, null, endpointDiscoveryCallback)
         }
     }
-
-//    @Provides
-//    @Master
-//    fun provideConnectivityMaster(@ApplicationContext context: Context, connectionLifecycleCallback: ConnectionLifecycleCallback): ConnectivityMaster {
-//        return ConnectivityMaster(context, connectionLifecycleCallback)
-//    }
-//
-//    @Provides
-//    @Slave
-//    fun provideConnectivitySlave(@ApplicationContext context: Context, endpointDiscoveryCallback: EndpointDiscoveryCallback): ConnectivitySlave {
-//        return ConnectivitySlave(context, endpointDiscoveryCallback)
-//    }
 
     @Provides
     @Master
@@ -80,19 +67,22 @@ object ConnectivityModule {
 
             override fun onConnectionResult(endPointId: String, connectionResolution: ConnectionResolution) {
                 if (connectionResolution.status.statusCode == ConnectionsStatusCodes.STATUS_OK) {
-                    ConnectivitySlave.endPointId = endPointId
+                    Connectivity.endPointId = endPointId
                     Nearby.getConnectionsClient(context).stopDiscovery()
                 }
             }
 
             override fun onDisconnected(p0: String) {
-                ConnectivitySlave.endPointId = null
+                Connectivity.endPointId = null
             }
         }
     }
 
     @Provides
-    fun provideEndpointDiscoveryCallback(@Slave connectionLifecycleCallback: ConnectionLifecycleCallback, @ApplicationContext context: Context): EndpointDiscoveryCallback {
+    fun provideEndpointDiscoveryCallback(
+        @Slave connectionLifecycleCallback: ConnectionLifecycleCallback,
+        @ApplicationContext context: Context
+    ): EndpointDiscoveryCallback {
         return object : EndpointDiscoveryCallback() {
             override fun onEndpointFound(endPointId: String, p1: DiscoveredEndpointInfo) {
                 Nearby.getConnectionsClient(context).requestConnection("Slave", endPointId, connectionLifecycleCallback)

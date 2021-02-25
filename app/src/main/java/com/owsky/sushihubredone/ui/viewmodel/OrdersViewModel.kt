@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import com.owsky.sushihubredone.data.OrderRepository
 import com.owsky.sushihubredone.data.TableRepository
 import com.owsky.sushihubredone.data.entities.Order
+import com.owsky.sushihubredone.data.entities.OrderStatus
 import com.owsky.sushihubredone.di.RepoWithConnect
 import com.owsky.sushihubredone.ui.view.ListOrders
 import com.owsky.sushihubredone.ui.view.OrdersAdapter
@@ -22,13 +23,25 @@ import javax.inject.Inject
 class OrdersViewModel @Inject constructor(
     @RepoWithConnect private val orderRepository: OrderRepository, private val tableRepository: TableRepository, application: Application
 ) : AndroidViewModel(application) {
+    val pendingOrders: LiveData<List<Order>> by lazy {
+        orderRepository.getOrdersLiveData(OrderStatus.Pending)
+    }
+    val confirmedOrders: LiveData<List<Order>> by lazy {
+        orderRepository.getOrdersLiveData(OrderStatus.Confirmed)
+    }
+    val deliveredOrders: LiveData<List<Order>> by lazy {
+        orderRepository.getOrdersLiveData(OrderStatus.Delivered)
+    }
+    val synchronizedOrders: LiveData<List<Order>> by lazy {
+        orderRepository.getAllSynchronized()
+    }
 
     fun getOrders(type: ListOrders.ListOrdersType): LiveData<List<Order>> {
         return when (type) {
-            ListOrders.ListOrdersType.Pending -> orderRepository.pendingOrders!!
-            ListOrders.ListOrdersType.Confirmed -> orderRepository.confirmedOrders!!
-            ListOrders.ListOrdersType.Delivered -> orderRepository.deliveredOrders!!
-            ListOrders.ListOrdersType.Synchronized -> orderRepository.synchronizedOrders!!
+            ListOrders.ListOrdersType.Pending -> pendingOrders
+            ListOrders.ListOrdersType.Confirmed -> confirmedOrders
+            ListOrders.ListOrdersType.Delivered -> deliveredOrders
+            ListOrders.ListOrdersType.Synchronized -> synchronizedOrders
         }
     }
 
