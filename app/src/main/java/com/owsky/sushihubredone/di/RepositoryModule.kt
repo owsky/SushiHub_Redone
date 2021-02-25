@@ -11,17 +11,20 @@ import com.owsky.sushihubredone.util.Connectivity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
 
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoryModule {
 
     @Provides
-    fun provideOrderRepository(@ApplicationContext context: Context, orderDao: OrderDao, prefs: SharedPreferences, connectivity: Connectivity): OrderRepository {
+    fun provideOrderRepository(
+        @ApplicationContext context: Context,
+        orderDao: OrderDao,
+        prefs: SharedPreferences,
+        connectivity: Connectivity
+    ): OrderRepository {
         return OrderRepository(context as Application, orderDao, prefs, connectivity)
     }
 

@@ -61,7 +61,7 @@ data class Order(
         }
 
         fun fromByteArray(bytes: ByteArray): Order {
-            return Order.create(unMarshall(bytes))
+            return create(unMarshall(bytes))
         }
 
         fun toByteArray(order: Order): ByteArray {
