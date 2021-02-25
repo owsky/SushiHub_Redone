@@ -20,6 +20,7 @@ import com.owsky.sushihubredone.util.Connectivity
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -27,11 +28,11 @@ import javax.inject.Inject
 class OrderRepository @Inject constructor(private val application: Application, private val orderDao: OrderDao, private val prefs: SharedPreferences, private val connectivity: Connectivity?) {
     private val table = prefs.getString("table_code", null)
 
-    fun getOrdersLiveData(orderStatus: OrderStatus): LiveData<List<Order>> {
+    fun getOrdersLiveData(orderStatus: OrderStatus): Flow<List<Order>> {
         return orderDao.getAllByStatus(orderStatus, table!!)
     }
 
-    fun getAllSynchronized(): LiveData<List<Order>> {
+    fun getAllSynchronized(): Flow<List<Order>> {
         return orderDao.getAllSynchronized(table!!)
     }
 
@@ -111,7 +112,7 @@ class OrderRepository @Inject constructor(private val application: Application, 
         Connectivity.disconnect(application)
     }
 
-    fun getOrderHistory(tableCode: String): LiveData<List<Order>> {
+    fun getOrderHistory(tableCode: String): Flow<List<Order>> {
         return orderDao.getAllByTable(tableCode)
     }
 

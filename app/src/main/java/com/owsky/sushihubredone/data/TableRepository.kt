@@ -1,13 +1,12 @@
 package com.owsky.sushihubredone.data
 
 import android.content.SharedPreferences
-import androidx.lifecycle.LiveData
 import com.owsky.sushihubredone.data.dao.TableDao
 import com.owsky.sushihubredone.data.entities.Table
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -17,7 +16,7 @@ class TableRepository @Inject constructor(private val tableDao: TableDao, privat
 
     private suspend fun getTable(tableCode: String) = tableDao.getTable(tableCode)
 
-    fun getAllButCurrent(): LiveData<List<Table>> {
+    fun getAllButCurrent(): Flow<List<Table>> {
         return tableDao.getAllButCurrent()
     }
 

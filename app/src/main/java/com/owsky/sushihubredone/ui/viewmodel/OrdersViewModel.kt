@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.owsky.sushihubredone.data.OrderRepository
 import com.owsky.sushihubredone.data.TableRepository
@@ -20,16 +21,16 @@ class OrdersViewModel @Inject constructor(
     private val orderRepository: OrderRepository, private val tableRepository: TableRepository
 ) : ViewModel() {
     private val pendingOrders: LiveData<List<Order>> by lazy {
-        orderRepository.getOrdersLiveData(OrderStatus.Pending)
+        orderRepository.getOrdersLiveData(OrderStatus.Pending).asLiveData()
     }
     private val confirmedOrders: LiveData<List<Order>> by lazy {
-        orderRepository.getOrdersLiveData(OrderStatus.Confirmed)
+        orderRepository.getOrdersLiveData(OrderStatus.Confirmed).asLiveData()
     }
     private val deliveredOrders: LiveData<List<Order>> by lazy {
-        orderRepository.getOrdersLiveData(OrderStatus.Delivered)
+        orderRepository.getOrdersLiveData(OrderStatus.Delivered).asLiveData()
     }
     private val synchronizedOrders: LiveData<List<Order>> by lazy {
-        orderRepository.getAllSynchronized()
+        orderRepository.getAllSynchronized().asLiveData()
     }
 
     fun getOrders(type: ListOrders.ListOrdersType): LiveData<List<Order>> {
