@@ -1,38 +1,34 @@
 package com.owsky.sushihubredone.ui.viewmodel
 
-import android.app.Application
 import android.content.Context
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.owsky.sushihubredone.data.OrderRepository
 import com.owsky.sushihubredone.data.TableRepository
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.OrderStatus
-import com.owsky.sushihubredone.di.RepoWithConnect
 import com.owsky.sushihubredone.ui.view.ListOrders
 import com.owsky.sushihubredone.ui.view.OrdersAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    @RepoWithConnect private val orderRepository: OrderRepository, private val tableRepository: TableRepository, application: Application
-) : AndroidViewModel(application) {
-    val pendingOrders: LiveData<List<Order>> by lazy {
+    private val orderRepository: OrderRepository, private val tableRepository: TableRepository
+) : ViewModel() {
+    private val pendingOrders: LiveData<List<Order>> by lazy {
         orderRepository.getOrdersLiveData(OrderStatus.Pending)
     }
-    val confirmedOrders: LiveData<List<Order>> by lazy {
+    private val confirmedOrders: LiveData<List<Order>> by lazy {
         orderRepository.getOrdersLiveData(OrderStatus.Confirmed)
     }
-    val deliveredOrders: LiveData<List<Order>> by lazy {
+    private val deliveredOrders: LiveData<List<Order>> by lazy {
         orderRepository.getOrdersLiveData(OrderStatus.Delivered)
     }
-    val synchronizedOrders: LiveData<List<Order>> by lazy {
+    private val synchronizedOrders: LiveData<List<Order>> by lazy {
         orderRepository.getAllSynchronized()
     }
 
@@ -55,19 +51,20 @@ class OrdersViewModel @Inject constructor(
 
     // the coroutines need to be blocking since the data is required to create the view
     fun getMenuPrice(): Double = runBlocking {
-            tableRepository.getMenuPrice()
+        tableRepository.getMenuPrice()
     }
+
     fun getExtraPrice(): Double = runBlocking {
-            orderRepository.getExtraPrice()
+        orderRepository.getExtraPrice()
     }
 
     fun checkout(viewModelStoreOwner: ViewModelStoreOwner, tableCode: String) {
-            orderRepository.checkOut()
-            tableRepository.checkoutTable(tableCode)
-            viewModelStoreOwner.viewModelStore.clear()
+        orderRepository.checkOut()
+        tableRepository.checkoutTable(tableCode)
+        viewModelStoreOwner.viewModelStore.clear()
     }
 
     fun getRecyclerCallback(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback {
-            return orderRepository.getRecyclerCallback(context, adapter, listOrdersType)
+        return orderRepository.getRecyclerCallback(context, adapter, listOrdersType)
     }
 }

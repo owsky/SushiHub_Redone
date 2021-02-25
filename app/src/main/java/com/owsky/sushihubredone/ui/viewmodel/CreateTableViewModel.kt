@@ -1,14 +1,13 @@
 package com.owsky.sushihubredone.ui.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import com.owsky.sushihubredone.data.TableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateTableViewModel @Inject constructor(private val tableRepository: TableRepository, application: Application) : AndroidViewModel(application) {
+class CreateTableViewModel @Inject constructor(private val tableRepository: TableRepository) : ViewModel() {
     // these coroutines are blocking because I need to assure that the data is written to the database before it is requested by the QR generation page
     // and the main thread should wait for the data to be retrieved since it's needed to generate the QR
     fun createTable(tableCode: String?, tableName: String, menuPrice: Double) {
