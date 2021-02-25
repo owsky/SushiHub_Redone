@@ -6,10 +6,8 @@ import android.content.SharedPreferences
 import android.graphics.Canvas
 import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.nearby.Nearby
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.data.dao.OrderDao
 import com.owsky.sushihubredone.data.entities.Order
@@ -22,10 +20,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class OrderRepository @Inject constructor(private val application: Application, private val orderDao: OrderDao, private val prefs: SharedPreferences, private val connectivity: Connectivity?) {
+class OrderRepository @Inject constructor(
+    private val application: Application,
+    private val orderDao: OrderDao,
+    private val prefs: SharedPreferences,
+    private val connectivity: Connectivity?
+) {
     private val table = prefs.getString("table_code", null)
 
     fun getOrdersLiveData(orderStatus: OrderStatus): Flow<List<Order>> {
@@ -119,7 +121,6 @@ class OrderRepository @Inject constructor(private val application: Application, 
     fun getRecyclerCallback(context: Context, adapter: OrdersAdapter, listOrdersType: ListOrders.ListOrdersType): ItemTouchHelper.SimpleCallback {
         return when (listOrdersType) {
             ListOrders.ListOrdersType.Pending -> makeRecyclerCallback(
-                context,
                 ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                 { integer -> confirmOrder(adapter.getOrderAt(integer)) },
                 { integer -> deleteOrder(adapter.getOrderAt(integer)) },
@@ -128,7 +129,6 @@ class OrderRepository @Inject constructor(private val application: Application, 
                 R.drawable.ic_send, R.drawable.ic_delete
             )
             ListOrders.ListOrdersType.Confirmed -> makeRecyclerCallback(
-                context,
                 ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT,
                 { integer -> markAsDelivered(adapter.getOrderAt(integer)) },
                 { integer -> undoConfirmOrder(adapter.getOrderAt(integer)) },
@@ -137,7 +137,6 @@ class OrderRepository @Inject constructor(private val application: Application, 
                 R.drawable.ic_confirmed, R.drawable.ic_send_rev
             )
             ListOrders.ListOrdersType.Delivered -> makeRecyclerCallback(
-                context,
                 ItemTouchHelper.LEFT,
                 null,
                 { integer -> undoMarkAsDelivered(adapter.getOrderAt(integer)) },
@@ -145,12 +144,11 @@ class OrderRepository @Inject constructor(private val application: Application, 
                 ContextCompat.getColor(context, R.color.colorPrimary),
                 0, R.drawable.ic_send_rev
             )
-            else -> makeRecyclerCallback(context, 0, null, null, 0, 0, 0, 0)
+            else -> makeRecyclerCallback(0, null, null, 0, 0, 0, 0)
         }
     }
 
     private fun makeRecyclerCallback(
-        context: Context,
         dragDir2: Int,
         consumerRight: Consumer<Int>?,
         consumerLeft: Consumer<Int>?,
@@ -177,18 +175,16 @@ class OrderRepository @Inject constructor(private val application: Application, 
             ) {
                 when {
                     dX < 0 -> {
-                        RecyclerViewSwipeDecorator.Builder(context, c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                            .addBackgroundColor(colorLeft)
-                            .addSwipeLeftActionIcon(drawableLeft)
-                            .create()
-                            .decorate()
+                        val decorator = RecyclerViewSwipeDecorator(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                        decorator.setBackgroundColor(colorLeft)
+                        decorator.setSwipeLeftActionIconId(drawableLeft)
+                        decorator.decorate()
                     }
                     dX > 0 -> {
-                        RecyclerViewSwipeDecorator.Builder(context, c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                            .addBackgroundColor(colorRight)
-                            .addSwipeRightActionIcon(drawableRight)
-                            .create()
-                            .decorate()
+                        val decorator = RecyclerViewSwipeDecorator(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                        decorator.setBackgroundColor(colorRight)
+                        decorator.setSwipeRightActionIconId(drawableRight)
+                        decorator.decorate()
                     }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
