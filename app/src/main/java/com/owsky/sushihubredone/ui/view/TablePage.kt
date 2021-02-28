@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.crazylegend.viewbinding.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentTableBinding
@@ -21,6 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class TablePage : Fragment(R.layout.fragment_table) {
     private lateinit var prefs: SharedPreferences
+    private val binding by viewBinding(FragmentTableBinding::bind)
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -35,7 +37,6 @@ class TablePage : Fragment(R.layout.fragment_table) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        val binding = FragmentTableBinding.bind(view)
         prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_tablePage_to_insertOrderPage)

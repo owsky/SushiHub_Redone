@@ -7,16 +7,16 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentConfigureUserBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
 
-@AndroidEntryPoint
 class ConfigureUserPage : Fragment(R.layout.fragment_configure_user) {
+    private val binding by viewBinding(FragmentConfigureUserBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentConfigureUserBinding.bind(view)
         binding.configureUserTextView.imeOptions = EditorInfo.IME_ACTION_DONE
         binding.configureUserBtn.setOnClickListener {
             val username = binding.configureUserTextView.text.toString()

@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
@@ -69,6 +70,7 @@ data class Order(
         }
     }
 
+    @IgnoredOnParcel
     @PrimaryKey(autoGenerate = true)
     var id: Long = 0
 }

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.crazylegend.viewbinding.viewBinding
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import com.owsky.sushihubredone.R
@@ -21,10 +22,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class GenerateQRPage : Fragment(R.layout.fragment_qr_generator) {
     private lateinit var data: String
     private val viewModel: CreateTableViewModel by viewModels()
+    private val binding by viewBinding(FragmentQrGeneratorBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentQrGeneratorBinding.bind(view)
         val args: GenerateQRPageArgs by navArgs()
         if (args.share)
             binding.doneqr.visibility = View.GONE

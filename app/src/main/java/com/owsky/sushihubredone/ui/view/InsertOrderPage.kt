@@ -5,11 +5,12 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.crazylegend.viewbinding.viewBinding
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.owsky.sushihubredone.R
@@ -21,36 +22,35 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
-    private lateinit var binding: FragmentUserInputBinding
+    private val binding by viewBinding(FragmentUserInputBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                CancelDialog().show(parentFragmentManager, tag)
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            CancelDialog().show(parentFragmentManager, tag)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentUserInputBinding.bind(view)
-        binding.switchExtra.setOnCheckedChangeListener { _, _ -> flipExtra() }
-        binding.addDesc.imeOptions = EditorInfo.IME_ACTION_DONE
+        binding.apply {
+            switchExtra.setOnCheckedChangeListener { _, _ -> flipExtra() }
+            addDesc.imeOptions = EditorInfo.IME_ACTION_DONE
 
-        binding.saveAndQuit.setOnClickListener {
-            if (saveOrder())
-                findNavController().navigateUp()
-        }
+            saveAndQuit.setOnClickListener {
+                if (saveOrder())
+                    findNavController().navigateUp()
+            }
 
-        binding.saveAndNew.setOnClickListener {
-            if (saveOrder()) {
-                binding.apply {
-                    binding.addCode.text = null
-                    binding.addDesc.text = null
-                    binding.addQuantity.text = null
-                    binding.addPrice.text = null
-                    binding.addCode.requestFocus()
+            saveAndNew.setOnClickListener {
+                if (saveOrder()) {
+                    apply {
+                        addCode.text = null
+                        addDesc.text = null
+                        addQuantity.text = null
+                        addPrice.text = null
+                        addCode.requestFocus()
+                    }
                 }
             }
         }

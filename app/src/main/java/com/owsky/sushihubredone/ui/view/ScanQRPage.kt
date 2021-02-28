@@ -15,15 +15,17 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
+import com.crazylegend.viewbinding.viewBinding
 import com.google.zxing.BarcodeFormat
 import com.owsky.sushihubredone.R
+import com.owsky.sushihubredone.databinding.FragmentQrScanBinding
 import com.owsky.sushihubredone.ui.viewmodel.CreateTableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
+    private val binding by viewBinding(FragmentQrScanBinding::bind)
     private lateinit var codeScanner: CodeScanner
-    private lateinit var scannerView: CodeScannerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +34,7 @@ class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        scannerView = view.findViewById(R.id.scanner_view)
-        codeScanner = CodeScanner(requireContext(), scannerView)
+        codeScanner = CodeScanner(requireContext(), binding.scannerView)
         setupScanner()
     }
 
@@ -50,18 +51,20 @@ class ScanQRPage : Fragment(R.layout.fragment_qr_scan) {
     }
 
     private fun setupScanner() {
-        codeScanner.formats = listOf(BarcodeFormat.QR_CODE)
-        codeScanner.decodeCallback = DecodeCallback {
-            val model: CreateTableViewModel by viewModels()
-            val info = TextUtils.split(it.text, ";")
-            val tableCode = info[0]
-            val menuPrice = info[1].toDouble()
-            val restName = info[2]
-            model.createTable(tableCode, restName, menuPrice)
-            findNavController().navigate(R.id.action_scanQRNav_to_configureUserPage)
+        codeScanner.apply {
+            formats = listOf(BarcodeFormat.QR_CODE)
+            decodeCallback = DecodeCallback {
+                val model: CreateTableViewModel by viewModels()
+                val info = TextUtils.split(it.text, ";")
+                val tableCode = info[0]
+                val menuPrice = info[1].toDouble()
+                val restName = info[2]
+                model.createTable(tableCode, restName, menuPrice)
+                findNavController().navigate(R.id.action_scanQRNav_to_configureUserPage)
+            }
+            errorCallback = ErrorCallback {}
         }
-        codeScanner.errorCallback = ErrorCallback {}
-        scannerView.setOnClickListener { codeScanner.startPreview() }
+        binding.scannerView.setOnClickListener { codeScanner.startPreview() }
     }
 
     override fun onResume() {

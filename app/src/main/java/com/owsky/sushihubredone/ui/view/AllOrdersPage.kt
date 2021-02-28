@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
@@ -14,10 +15,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class AllOrdersPage : Fragment(R.layout.fragment_recyclerview) {
+    val binding by viewBinding(FragmentRecyclerviewBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentRecyclerviewBinding.bind(view)
         val args: AllOrdersPageArgs by navArgs()
         val viewModel: OrdersViewModel by viewModels()
         val ordersAdapter = OrdersAdapter()

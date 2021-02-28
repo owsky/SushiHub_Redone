@@ -6,8 +6,10 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentCheckOutBinding
+import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
@@ -15,9 +17,10 @@ import java.text.DecimalFormatSymbols
 
 @AndroidEntryPoint
 class CheckOutPage : Fragment(R.layout.fragment_check_out) {
+    private val binding by viewBinding(FragmentCheckOutBinding::bind)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentCheckOutBinding.bind(view)
         val viewModel: OrdersViewModel by viewModels()
         val locale = requireActivity().resources.configuration.locales.get(0)
         val menuPrice = viewModel.getMenuPrice()

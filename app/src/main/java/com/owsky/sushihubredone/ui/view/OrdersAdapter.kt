@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.crazylegend.viewbinding.globalViewBinding
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.databinding.OrderItemBinding
 

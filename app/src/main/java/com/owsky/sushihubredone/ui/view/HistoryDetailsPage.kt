@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
 import com.owsky.sushihubredone.ui.viewmodel.HistoryViewModel
@@ -19,11 +20,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class HistoryDetailsPage : Fragment(R.layout.fragment_recyclerview) {
     private val viewModel: HistoryViewModel by viewModels()
     private val args: HistoryDetailsPageArgs by navArgs()
+    private val binding by viewBinding(FragmentRecyclerviewBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        val binding = FragmentRecyclerviewBinding.bind(view)
         val ordersAdapter = OrdersAdapter()
         binding.recyclerView.apply {
             adapter = ordersAdapter

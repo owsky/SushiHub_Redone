@@ -8,6 +8,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
 import com.owsky.sushihubredone.ui.viewmodel.HistoryViewModel
@@ -16,10 +17,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class HistoryPage : Fragment(R.layout.fragment_recyclerview) {
     private val viewModel: HistoryViewModel by viewModels()
+    private val binding by viewBinding(FragmentRecyclerviewBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentRecyclerviewBinding.bind(view)
         setHasOptionsMenu(true)
         val historyAdapter = HistoryAdapter()
         binding.recyclerView.apply {

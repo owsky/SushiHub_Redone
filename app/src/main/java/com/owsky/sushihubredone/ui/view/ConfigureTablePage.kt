@@ -1,12 +1,15 @@
 package com.owsky.sushihubredone.ui.view
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentConfigureTableBinding
 import com.owsky.sushihubredone.ui.viewmodel.CreateTableViewModel
@@ -14,11 +17,11 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ConfigureTablePage : Fragment(R.layout.fragment_configure_table) {
+    private val binding by viewBinding(FragmentConfigureTableBinding::bind)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val model: CreateTableViewModel by viewModels()
-        val binding = FragmentConfigureTableBinding.bind(view)
         binding.apply {
             menuPrice.imeOptions = EditorInfo.IME_ACTION_DONE
             configureDone.setOnClickListener {
