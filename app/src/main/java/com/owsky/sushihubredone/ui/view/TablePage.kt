@@ -17,6 +17,8 @@ import com.crazylegend.viewbinding.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentTableBinding
+import com.owsky.sushihubredone.prefsIsMaster
+import com.owsky.sushihubredone.prefsIdentifier
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,7 +39,7 @@ class TablePage : Fragment(R.layout.fragment_table) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+        prefs = requireActivity().getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE)
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_tablePage_to_insertOrderPage)
         }
@@ -67,7 +69,7 @@ class TablePage : Fragment(R.layout.fragment_table) {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.lista_overflow, menu)
         val item = menu.findItem(R.id.toAllOrders)
-        if (!prefs.contains("is_master"))
+        if (!prefs.contains(prefsIsMaster))
             item.isVisible = true
         super.onCreateOptionsMenu(menu, inflater)
     }

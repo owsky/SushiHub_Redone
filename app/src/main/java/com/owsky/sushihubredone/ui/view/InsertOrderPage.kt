@@ -17,6 +17,9 @@ import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.data.entities.Order
 import com.owsky.sushihubredone.data.entities.OrderStatus
 import com.owsky.sushihubredone.databinding.FragmentUserInputBinding
+import com.owsky.sushihubredone.prefsIdentifier
+import com.owsky.sushihubredone.prefsTableCode
+import com.owsky.sushihubredone.prefsUsername
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -57,9 +60,9 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
     }
 
     private fun saveOrder(): Boolean {
-        val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+        val prefs = requireActivity().getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE)
         val viewModel: OrdersViewModel by viewModels()
-        val tableCode = prefs.getString("table_code", null)!!
+        val tableCode = prefs.getString(prefsTableCode, null)!!
         val dishCode = binding.addCode.text.toString()
         val status = OrderStatus.Pending
         val description = binding.addDesc.text.toString()
@@ -74,7 +77,7 @@ class InsertOrderPage : Fragment(R.layout.fragment_user_input) {
             binding.addQuantity.text.toString().isEmpty() ->
                 Toast.makeText(requireContext(), "Insert the quantity", Toast.LENGTH_SHORT).show()
             else -> {
-                val username = prefs.getString("username", null)!!
+                val username = prefs.getString(prefsUsername, null)!!
                 val newOrder = Order(dishCode, description, status, tableCode, username, false, extraPrice)
                 viewModel.insertOrder(newOrder, binding.addQuantity.text.toString().toInt())
                 Snackbar.make(requireActivity().findViewById(android.R.id.content), "Undo?", BaseTransientBottomBar.LENGTH_LONG)

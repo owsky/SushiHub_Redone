@@ -2,6 +2,7 @@ package com.owsky.sushihubredone.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.owsky.sushihubredone.prefsIdentifier
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +16,5 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePrefs(@ApplicationContext context: Context): SharedPreferences = context.getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+    fun providePrefs(@ApplicationContext context: Context): SharedPreferences = context.getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE)
 }

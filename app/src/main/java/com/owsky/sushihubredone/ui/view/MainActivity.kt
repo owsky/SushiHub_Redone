@@ -23,6 +23,8 @@ import com.crazylegend.viewbinding.viewBinding
 import com.google.android.material.navigation.NavigationView
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.ActivityMainBinding
+import com.owsky.sushihubredone.prefsIdentifier
+import com.owsky.sushihubredone.prefsTableCode
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,10 +61,10 @@ class MainActivity : NavigationView.OnNavigationItemSelectedListener, AppCompatA
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val prefs = getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE)
         when (item.itemId) {
             R.id.listsNav -> {
-                if (prefs.contains("table_code")) {
+                if (prefs.contains(prefsTableCode)) {
                     navController.navigate(R.id.tablePage)
                 } else {
                     navController.navigate(R.id.homePageNav)

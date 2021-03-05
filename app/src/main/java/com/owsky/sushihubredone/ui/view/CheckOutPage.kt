@@ -9,7 +9,8 @@ import androidx.navigation.fragment.findNavController
 import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentCheckOutBinding
-import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
+import com.owsky.sushihubredone.prefsIdentifier
+import com.owsky.sushihubredone.prefsTableCode
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DecimalFormat
@@ -33,8 +34,8 @@ class CheckOutPage : Fragment(R.layout.fragment_check_out) {
             checkoutExtra.text = String.format(locale, "Extras Price: %s €", df.format(extraPrice))
             checkoutTotal.text = String.format(locale, "Total: %s €", df.format(menuPrice + extraPrice))
             checkoutDone.setOnClickListener {
-                val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-                viewModel.checkout(requireActivity(), prefs.getString("table_code", null)!!)
+                val prefs = requireActivity().getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE)
+                viewModel.checkout(requireActivity(), prefs.getString(prefsTableCode, null)!!)
                 findNavController().navigate(R.id.action_checkOutPage_to_homePageNav)
             }
         }

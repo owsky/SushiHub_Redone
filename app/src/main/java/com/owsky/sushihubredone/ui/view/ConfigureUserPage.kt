@@ -10,7 +10,8 @@ import androidx.navigation.fragment.findNavController
 import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentConfigureUserBinding
-import com.owsky.sushihubredone.databinding.FragmentRecyclerviewBinding
+import com.owsky.sushihubredone.prefsIdentifier
+import com.owsky.sushihubredone.prefsUsername
 
 class ConfigureUserPage : Fragment(R.layout.fragment_configure_user) {
     private val binding by viewBinding(FragmentConfigureUserBinding::bind)
@@ -23,8 +24,8 @@ class ConfigureUserPage : Fragment(R.layout.fragment_configure_user) {
             if (username.trim().isEmpty())
                 Toast.makeText(requireContext(), "Insert a username", Toast.LENGTH_SHORT).show()
             else {
-                val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE).edit()
-                prefs.putString("username", username).apply()
+                val prefs = requireActivity().getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE).edit()
+                prefs.putString(prefsUsername, username).apply()
                 findNavController().navigate(R.id.action_configureUserPage_to_tablePage)
             }
         }

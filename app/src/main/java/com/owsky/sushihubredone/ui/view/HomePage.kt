@@ -12,6 +12,8 @@ import androidx.navigation.fragment.findNavController
 import com.crazylegend.viewbinding.viewBinding
 import com.owsky.sushihubredone.R
 import com.owsky.sushihubredone.databinding.FragmentHomepageBinding
+import com.owsky.sushihubredone.prefsIdentifier
+import com.owsky.sushihubredone.prefsTableCode
 import com.owsky.sushihubredone.ui.viewmodel.OrdersViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,9 +26,9 @@ class HomePage : Fragment(R.layout.fragment_homepage) {
             btnJoin.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_scanQRNav) }
             btnCreate.setOnClickListener { findNavController().navigate(R.id.action_homePageNav_to_configureTableNav) }
         }
-        val prefs = requireActivity().getSharedPreferences("SushiHub_Redone", Context.MODE_PRIVATE)
-        if (prefs.contains("table_code"))
-            ResumeDialog(prefs.getString("table_code", null)!!).show(parentFragmentManager, null)
+        val prefs = requireActivity().getSharedPreferences(prefsIdentifier, Context.MODE_PRIVATE)
+        if (prefs.contains(prefsTableCode))
+            ResumeDialog(prefs.getString(prefsTableCode, null)!!).show(parentFragmentManager, null)
     }
 
     @AndroidEntryPoint
